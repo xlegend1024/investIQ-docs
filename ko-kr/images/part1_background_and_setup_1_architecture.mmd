@@ -1,0 +1,30 @@
+flowchart LR
+    subgraph DATA["데이터 레이어"]
+        MD["market-data<br/>(Alpaca 바)"]
+        NI["news-intel<br/>(AI NLP)"]
+        WI["watchlist-intel<br/>(레짐 분류)"]
+    end
+    subgraph ANALYSIS["분석 레이어"]
+        SE["signal-engine<br/>(모멘텀)"]
+        QR["quant-research<br/>(최적화)"]
+        SC["strategy-config<br/>(전략 프로파일)"]
+    end
+    subgraph EXEC["실행 레이어"]
+        RE["risk-engine<br/>(토큰 게이트)"]
+        EX["execution<br/>(Alpaca API)"]
+    end
+    ST["state<br/>(오케스트레이터)"]
+    LS["logging-storage<br/>(감사 로그)"]
+    DASH["dashboard<br/>(React 운영 UI)"]
+
+    MD --> SE
+    NI --> QR
+    WI --> SC
+    SE --> QR
+    QR --> RE
+    SC --> RE
+    RE --> EX
+    EX --> ST
+    ST --> LS
+    ST --> DASH
+    LS --> DASH

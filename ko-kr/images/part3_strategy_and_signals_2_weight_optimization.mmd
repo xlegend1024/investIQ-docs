@@ -1,0 +1,9 @@
+flowchart LR
+    CAND["후보 종목<br/>(컴포지트 점수 상위)"] --> SCREEN["5단계 품질 게이트<br/>스크리너"]
+    SCREEN --> OPT{"최적화 방법"}
+    OPT --> MK["Markowitz<br/>(평균-분산)"]
+    OPT --> RP["Risk Parity<br/>(위험 균등)"]
+    MK --> MC["몬테카를로<br/>검증"]
+    RP --> MC
+    MC --> CAP["집중도 캡<br/>(단일 종목 상한)"]
+    CAP --> PLAN["목표 비중 플랜<br/>target weights"]

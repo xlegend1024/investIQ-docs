@@ -1,0 +1,27 @@
+flowchart LR
+    subgraph SOURCES["External sources"]
+        A["Alpaca<br/>daily/minute bars"]
+        B["RSS feeds"]
+        C["Reddit"]
+        D["SEC 8-K"]
+        E["SearXNG<br/>metasearch"]
+    end
+    subgraph INGEST["Ingest & normalize"]
+        MD["market-data<br/>(attach provenance)"]
+        NI["news-intel<br/>(AI sentiment NLP)"]
+    end
+    subgraph FEATURES["Featurization"]
+        F["daily sentiment<br/>sentiment_score"]
+        G["momentum 126d /<br/>pullback 20d"]
+        H["regime<br/>DIA·SPY·VIXY"]
+    end
+    A --> MD --> G
+    B --> NI
+    C --> NI
+    D --> NI
+    E --> NI
+    NI --> F
+    MD --> H
+    F --> PANEL["analysis panel<br/>(symbol × date)"]
+    G --> PANEL
+    H --> PANEL

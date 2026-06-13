@@ -1,0 +1,14 @@
+flowchart TD
+    T2["ROOT · T2 기대값<br/>f*=−8.172, PF=0.03<br/>거래당 −$7.40"]
+    T1["MECHANISM · T1 처분효과<br/>평균승 $0.91 vs 평균패 −$10.42<br/>수익배율 0.09"]
+    T5["TRIGGER · T5 레짐<br/>절대 강세 아닌 레짐에 평균회귀<br/>승률 27%"]
+    T3["AMPLIFIER · T3 집중도<br/>IONL+KORU = 87%<br/>유효분산 2.2/11"]
+    T4["AMPLIFIER · T4 레버리지<br/>β=2.25, α≈0"]
+    T6["CONFOUND · T6 실행무결성<br/>주문 40× 재제출<br/>지표 오염 + 라이브 위험"]
+
+    T2 --> LOSS["−$1,554.61<br/>프록시 손실"]
+    T1 --> T2
+    T5 --> T2
+    T3 --> LOSS
+    T4 --> LOSS
+    T6 -. "지표 왜곡" .-> LOSS

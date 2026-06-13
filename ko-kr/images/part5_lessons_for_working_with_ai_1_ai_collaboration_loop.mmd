@@ -1,0 +1,8 @@
+flowchart LR
+    H["사람(비전문가)<br/>의도·승인·거부"] --> PLAN["AI: 계획·설계"]
+    PLAN --> IMPL["AI: 구현"]
+    IMPL --> REVIEW["AI: 독립 리뷰<br/>(다른 에이전트)"]
+    REVIEW -- "반려" --> REASSIGN["다른 에이전트가 수정<br/>(원작자 잠금)"]
+    REASSIGN --> REVIEW
+    REVIEW -- "승인" --> VALIDATE["AI: 연구 검증<br/>(사전등록 기준)"]
+    VALIDATE --> H

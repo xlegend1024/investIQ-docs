@@ -1,0 +1,8 @@
+flowchart LR
+    H["Human (novice)<br/>intent · approval · veto"] --> PLAN["AI: plan & design"]
+    PLAN --> IMPL["AI: implement"]
+    IMPL --> REVIEW["AI: independent review<br/>(a different agent)"]
+    REVIEW -- "reject" --> REASSIGN["a different agent fixes it<br/>(original author locked out)"]
+    REASSIGN --> REVIEW
+    REVIEW -- "approve" --> VALIDATE["AI: research validation<br/>(pre-registered criteria)"]
+    VALIDATE --> H

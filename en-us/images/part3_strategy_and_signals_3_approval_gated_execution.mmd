@@ -1,0 +1,21 @@
+sequenceDiagram
+    participant R as quant-research<br/>(proposal generation)
+    participant S as state<br/>(orchestrator)
+    participant U as Operator (human)
+    participant RE as risk-engine
+    participant E as execution
+    participant L as logging-storage
+
+    R->>S: Propose target-weight plan
+    S->>U: Show proposal on dashboard
+    U->>S: One-click approve
+    S->>RE: Request order-intent validation
+    RE->>RE: Check position/loss limits
+    alt Limits pass
+        RE-->>E: Issue HMAC approval token
+        E->>E: Submit Alpaca paper order
+        E->>L: Record execution report
+    else Limit exceeded / kill switch
+        RE-->>S: Reject (fail-closed)
+        S->>L: Audit-log the rejection reason
+    end

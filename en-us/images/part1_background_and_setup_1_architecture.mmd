@@ -1,0 +1,30 @@
+flowchart LR
+    subgraph DATA["Data layer"]
+        MD["market-data<br/>(Alpaca bars)"]
+        NI["news-intel<br/>(AI NLP)"]
+        WI["watchlist-intel<br/>(regime classify)"]
+    end
+    subgraph ANALYSIS["Analysis layer"]
+        SE["signal-engine<br/>(momentum)"]
+        QR["quant-research<br/>(optimization)"]
+        SC["strategy-config<br/>(strategy profile)"]
+    end
+    subgraph EXEC["Execution layer"]
+        RE["risk-engine<br/>(token gate)"]
+        EX["execution<br/>(Alpaca API)"]
+    end
+    ST["state<br/>(orchestrator)"]
+    LS["logging-storage<br/>(audit log)"]
+    DASH["dashboard<br/>(React ops UI)"]
+
+    MD --> SE
+    NI --> QR
+    WI --> SC
+    SE --> QR
+    QR --> RE
+    SC --> RE
+    RE --> EX
+    EX --> ST
+    ST --> LS
+    ST --> DASH
+    LS --> DASH

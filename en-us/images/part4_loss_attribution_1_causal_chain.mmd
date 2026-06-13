@@ -1,0 +1,14 @@
+flowchart TD
+    T2["ROOT · T2 expectancy<br/>f*=−8.172, PF=0.03<br/>−$7.40 per trade"]
+    T1["MECHANISM · T1 disposition<br/>avg win $0.91 vs avg loss −$10.42<br/>payoff 0.09"]
+    T5["TRIGGER · T5 regime<br/>mean reversion into never-bullish regime<br/>27% win rate"]
+    T3["AMPLIFIER · T3 concentration<br/>IONL+KORU = 87%<br/>effective bets 2.2/11"]
+    T4["AMPLIFIER · T4 leverage<br/>β=2.25, α≈0"]
+    T6["CONFOUND · T6 execution integrity<br/>orders resubmitted 40×<br/>metric contamination + live risk"]
+
+    T2 --> LOSS["−$1,554.61<br/>proxy loss"]
+    T1 --> T2
+    T5 --> T2
+    T3 --> LOSS
+    T4 --> LOSS
+    T6 -. "metric distortion" .-> LOSS

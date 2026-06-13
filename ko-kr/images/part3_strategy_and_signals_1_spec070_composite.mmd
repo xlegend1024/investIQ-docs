@@ -1,0 +1,8 @@
+flowchart TD
+    TS["기술 점수<br/>technical_score<br/>(모멘텀 기반)"] --> RAW
+    NS["뉴스 점수<br/>news_score<br/>(감성 0~1)"] --> RAW
+    RAW["raw_score =<br/>clip(mean(기술, 뉴스), 0, 1)"] --> ADJ
+    MOM["126일 모멘텀"] --> MULT
+    PB["20일 풀백"] --> MULT
+    MULT["풀백-모멘텀 배율<br/>[0.75, 1.25]"] --> ADJ
+    ADJ["composite_score =<br/>raw_score × 배율"] --> RANK["종목 랭킹 →<br/>포트폴리오 후보"]

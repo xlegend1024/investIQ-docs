@@ -1,0 +1,45 @@
+title: InvestIQ Series
+description: >-
+  Building an Algorithmic Trading System as an Investing Novice, with an AI Team —
+  a 5-part technical series (English / 한국어).
+url: "https://xlegend1024.github.io"
+baseurl: "/investIQ-docs"
+
+# Theme (built remotely / via Actions)
+remote_theme: just-the-docs/just-the-docs@v0.7.0
+
+# Search
+search_enabled: true
+search:
+  heading_level: 2
+  previews: 3
+
+# Render ```mermaid code blocks as diagrams
+mermaid:
+  version: "10.9.1"
+
+# Footer / header links to the repository
+aux_links:
+  "GitHub Repository":
+    - "https://github.com/xlegend1024/investIQ-docs"
+aux_links_new_tab: true
+
+# Light code copy button + nav
+enable_copy_code_button: true
+
+# Files that should not be bundled into the published site
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - vendor
+  - .github
+
+plugins:
+  - jekyll-remote-theme
+  - jekyll-relative-links
+  - jekyll-seo-tag
+
+# Make relative .md links resolve to the generated pages
+relative_links:
+  enabled: true
+  collections: false

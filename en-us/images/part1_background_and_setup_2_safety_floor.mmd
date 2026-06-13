@@ -1,0 +1,9 @@
+flowchart TD
+    A["Algorithm-generated trade proposal"] --> B{"Paper/sandbox<br/>default?"}
+    B -- "Yes (default)" --> C{"Risk limits<br/>pass?"}
+    B -- "No" --> X["Block: real capital<br/>disabled by default"]
+    C -- "Max position/exposure OK" --> D{"Kill switch<br/>active?"}
+    C -- "Limit exceeded" --> X2["Block + audit log"]
+    D -- "Normal" --> E["Submit order (paper)"]
+    D -- "Kill switch ON" --> X3["Full halt"]
+    E --> F["logging-storage<br/>writes audit log"]

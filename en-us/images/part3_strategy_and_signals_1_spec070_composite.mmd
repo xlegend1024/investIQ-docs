@@ -1,0 +1,8 @@
+flowchart TD
+    TS["technical score<br/>technical_score<br/>(momentum-based)"] --> RAW
+    NS["news score<br/>news_score<br/>(sentiment 0–1)"] --> RAW
+    RAW["raw_score =<br/>clip(mean(technical, news), 0, 1)"] --> ADJ
+    MOM["126-day momentum"] --> MULT
+    PB["20-day pullback"] --> MULT
+    MULT["pullback-momentum multiplier<br/>[0.75, 1.25]"] --> ADJ
+    ADJ["composite_score =<br/>raw_score × multiplier"] --> RANK["symbol ranking →<br/>portfolio candidates"]

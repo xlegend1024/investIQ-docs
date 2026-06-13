@@ -1,0 +1,21 @@
+sequenceDiagram
+    participant R as quant-research<br/>(제안 생성)
+    participant S as state<br/>(오케스트레이터)
+    participant U as 운영자(사람)
+    participant RE as risk-engine
+    participant E as execution
+    participant L as logging-storage
+
+    R->>S: 목표 비중 플랜 제안(Proposal)
+    S->>U: 대시보드에 제안 표시
+    U->>S: 원클릭 승인(Approve)
+    S->>RE: 주문 의도 검증 요청
+    RE->>RE: 포지션/손실 한도 체크
+    alt 한도 통과
+        RE-->>E: HMAC 승인 토큰 발급
+        E->>E: Alpaca 페이퍼 주문 제출
+        E->>L: 실행 리포트 기록
+    else 한도 초과 / 킬 스위치
+        RE-->>S: 거부 (fail-closed)
+        S->>L: 거부 사유 감사 로그
+    end

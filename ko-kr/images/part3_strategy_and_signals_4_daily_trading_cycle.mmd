@@ -1,0 +1,13 @@
+flowchart TD
+    START["프리마켓"] --> REGIME["레짐 분류<br/>(DIA/SPY/VIXY)"]
+    REGIME --> NEWS["뉴스 수집·감성"]
+    NEWS --> SIGNAL["신호 생성<br/>(Spec070 컴포지트)"]
+    SIGNAL --> SCREEN["스크리너 +<br/>최적화(Markowitz/RP)"]
+    SCREEN --> PROPOSE["목표 비중 제안"]
+    PROPOSE --> APPROVE{"운영자 승인?"}
+    APPROVE -- "예" --> RISK{"risk-engine<br/>게이트 통과?"}
+    APPROVE -- "아니오" --> HOLD["보류"]
+    RISK -- "통과 + HMAC" --> EXEC["페이퍼 주문 실행"]
+    RISK -- "거부" --> HOLD
+    EXEC --> EOD["장마감 리뷰 +<br/>감사 로그"]
+    EOD --> START

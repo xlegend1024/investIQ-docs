@@ -1,0 +1,9 @@
+flowchart LR
+    CAND["candidate symbols<br/>(top composite scores)"] --> SCREEN["5-stage quality-gate<br/>screener"]
+    SCREEN --> OPT{"optimization method"}
+    OPT --> MK["Markowitz<br/>(mean-variance)"]
+    OPT --> RP["Risk Parity<br/>(equal risk)"]
+    MK --> MC["Monte Carlo<br/>validation"]
+    RP --> MC
+    MC --> CAP["concentration cap<br/>(per-symbol limit)"]
+    CAP --> PLAN["target-weight plan<br/>target weights"]

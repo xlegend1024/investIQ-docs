@@ -1,0 +1,27 @@
+flowchart LR
+    subgraph SOURCES["외부 출처"]
+        A["Alpaca<br/>일봉/분봉"]
+        B["RSS 피드"]
+        C["Reddit"]
+        D["SEC 8-K"]
+        E["SearXNG<br/>메타검색"]
+    end
+    subgraph INGEST["수집·정규화"]
+        MD["market-data<br/>(provenance 부착)"]
+        NI["news-intel<br/>(AI 감성 NLP)"]
+    end
+    subgraph FEATURES["피처화"]
+        F["일별 감성<br/>sentiment_score"]
+        G["모멘텀 126d /<br/>풀백 20d"]
+        H["레짐<br/>DIA·SPY·VIXY"]
+    end
+    A --> MD --> G
+    B --> NI
+    C --> NI
+    D --> NI
+    E --> NI
+    NI --> F
+    MD --> H
+    F --> PANEL["분석 패널<br/>(symbol × date)"]
+    G --> PANEL
+    H --> PANEL

@@ -1,0 +1,13 @@
+flowchart TD
+    START["Premarket"] --> REGIME["regime classification<br/>(DIA/SPY/VIXY)"]
+    REGIME --> NEWS["news collection & sentiment"]
+    NEWS --> SIGNAL["signal generation<br/>(Spec070 composite)"]
+    SIGNAL --> SCREEN["screener +<br/>optimization (Markowitz/RP)"]
+    SCREEN --> PROPOSE["propose target weights"]
+    PROPOSE --> APPROVE{"operator approves?"}
+    APPROVE -- "Yes" --> RISK{"risk-engine<br/>gate passes?"}
+    APPROVE -- "No" --> HOLD["Hold"]
+    RISK -- "Pass + HMAC" --> EXEC["execute paper order"]
+    RISK -- "Reject" --> HOLD
+    EXEC --> EOD["end-of-day review +<br/>audit log"]
+    EOD --> START
