@@ -7,10 +7,14 @@ permalink: /en-us/
 
 # English Series
 
-*Building an Algorithmic Trading System as an Investing Novice, with an AI Team.*
-
-A 5-part technical series. Use the sidebar to navigate, or pick a part below.
-The 한국어 translation is available under [한국어](../ko-kr/index.md).
+<div class="iq-hero" markdown="0">
+  <span class="iq-eyebrow">English · 5 parts</span>
+  <h1 class="iq-title">Building a Trading System with an AI Team</h1>
+  <p class="iq-sub">A non-specialist's end-to-end algorithmic trading system, built with an LLM-based AI team and analyzed <strong>honestly</strong>. Use the sidebar to navigate, or pick a part below.</p>
+  <div class="iq-cta">
+    <a class="iq-btn iq-btn-ghost" href="../ko-kr/">한국어로 보기 →</a>
+  </div>
+</div>
 
 | # | Title | One-line summary |
 |---|---|---|

@@ -1,0 +1,29 @@
+// InvestIQ — custom color scheme (light base, professional fintech palette)
+// Deep navy + signal blue with a restrained green/red accent for finance.
+
+$body-background-color: #ffffff;
+$sidebar-color: #f6f8fb;
+$search-background-color: #ffffff;
+
+$body-text-color: #25323f;
+$body-heading-color: #0a2342;
+$nav-child-link-color: #56657a;
+$link-color: #1763c6;
+
+$btn-primary-color: #1763c6;
+$base-button-color: #eef2f8;
+
+$border-color: #e3e9f2;
+$table-background-color: #ffffff;
+$feedback-color: #eef2f8;
+
+$code-background-color: #f4f7fb;
+$search-result-preview-color: #6b7a90;
+
+// Brand tokens reused by custom.scss
+$iq-navy: #0a2342;
+$iq-blue: #1763c6;
+$iq-blue-soft: #e7f0fb;
+$iq-green: #1f9d57;
+$iq-red: #d2433a;
+$iq-amber: #c98a12;
