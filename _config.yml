@@ -66,6 +66,13 @@ plugins:
   - jekyll-relative-links
   - jekyll-seo-tag
 
+# Apply the theme's default layout to every page (gem themes don't auto-apply it)
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: default
+
 # Make relative .md links resolve to the generated pages
 relative_links:
   enabled: true
