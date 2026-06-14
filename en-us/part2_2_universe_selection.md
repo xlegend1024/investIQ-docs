@@ -57,7 +57,8 @@ Below, each stage follows the rules exactly as verified in the code.
 ## 2. Discovery — the news-intel leader promotion gate
 
 Candidates originate in news-intel. From the multi-source news (Part 2.1) it accumulates a **leader
-score** and a **sentiment score** per symbol, turns each into an EWMA z-score, and computes a
+score** and a **sentiment score** per symbol, turns each into an EWMA z-score (a recency-weighted
+moving average, standardized), and computes a
 composite:
 
 $$\text{composite} = 0.6 \times z_{\text{ewma}}(\text{leader}) + 0.4 \times z_{\text{ewma}}(\text{sentiment})$$
@@ -89,7 +90,7 @@ pool. From here, safety guards and hard caps apply:
 - **Held-symbol protection:** a symbol already held is not re-admitted as a candidate — unless its
   reactivation score is ≥ 0.75.
 - **Sector cap 5 · total cap 55:** exceeding 5 per sector or 55 across the pool yields `rejected_cap`.
-  Candidates are held as `pending` with a **7-day TTL**.
+  Candidates are held as `pending` with a **7-day TTL** (dropped from the pool automatically after 7 days).
 
 Approval is a separate **auto-approve** stage (`auto_approve_pending`):
 

@@ -6,6 +6,7 @@ permalink: /
 ---
 
 <div class="iq-hero" markdown="0">
+  <img class="iq-logo" src="en-us/images/investIQ_logo.png" alt="InvestIQ" />
   <span class="iq-eyebrow">5-part technical series · English / 한국어</span>
   <h1 class="iq-title">Building an Algorithmic Trading System as an Investing Novice — with an AI Team</h1>
   <p class="iq-sub">An end-to-end trading system built by a non-specialist with the help of an LLM-based AI team. Run on a minimal budget in a paper account, then analyzed <strong>honestly</strong> — including the losses and what they actually were.</p>

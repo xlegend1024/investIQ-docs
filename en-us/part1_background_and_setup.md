@@ -30,7 +30,8 @@ nav_order: 1
 
 ## A note on what "the AI" does here
 
-Trading decisions are made by **code-defined algorithms** — technical-analysis signals, portfolio
+A common misconception is worth clearing up first. Trading decisions are made not by the AI but by
+**code-defined algorithms** — technical-analysis signals, portfolio
 optimization, and risk rules. The role of the AI agents was to help a non-specialist **develop,
 research, and review** that algorithmic program, not to pick symbols or place orders in real time.
 Throughout the series, "the AI team" means a development organization, and a "proposal" means
@@ -117,7 +118,7 @@ Each service is independently deployable and bundled with Docker Compose. The co
 | state | 8015 | Market-session orchestrator, lifecycle, proposal engine |
 | logging-storage | 8010 | Append-only event log (JSONL), trade logs |
 
-The execution service follows a **fail-closed** first principle: no order is submitted without an
+The execution service follows a **fail-closed** first principle (when in doubt, block): no order is submitted without an
 HMAC token from risk-engine. Standing up this gate before anything else, even for a paper MVP,
 reflects a deliberate priority — the point at which an algorithm-generated proposal is forwarded to
 a broker is the highest-risk step in the system, and a veto layer belongs in code, not in process.

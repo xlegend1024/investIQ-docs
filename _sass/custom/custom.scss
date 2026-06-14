@@ -46,6 +46,14 @@ $iq-amber: #c98a12 !default;
 
   > * { position: relative; z-index: 1; }
 
+  .iq-logo {
+    display: block;
+    height: 64px;
+    width: auto;
+    margin: 0 0 1.25rem;
+    filter: drop-shadow(0 4px 12px rgba(10, 35, 66, 0.35));
+  }
+
   .iq-eyebrow {
     display: inline-block;
     font-size: 0.72rem;
@@ -234,4 +242,5 @@ $iq-amber: #c98a12 !default;
 @media (max-width: 50rem) {
   .iq-hero { padding: 2.25rem 1.25rem; }
   .iq-hero h1.iq-title { font-size: 1.6rem; }
+  .iq-hero .iq-logo { height: 48px; }
 }

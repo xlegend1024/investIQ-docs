@@ -105,7 +105,8 @@ role is a filter or overlay, which is how the composite score in Part 3 uses it.
 
 The loss analysis is built on the broker's own **filled-order record**. The **Alpaca filled-order
 API** returns the actual fills: for this experiment, 866 orders, 742 filled, and 1,314 individual
-fills over 2026-04-13 to 2026-06-13. Matching those fills into round-trips by FIFO produced the
+fills over 2026-04-13 to 2026-06-13. Matching those fills into round-trips by FIFO (first-in,
+first-out — the earliest shares bought are treated as the first ones sold) produced the
 realized PnL that Part 4 analyzes — **−$369.85 across 927 closed round-trips**.
 
 | Data item | Result |

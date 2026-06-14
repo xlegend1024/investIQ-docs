@@ -8,6 +8,7 @@ permalink: /en-us/
 # English Series
 
 <div class="iq-hero" markdown="0">
+  <img class="iq-logo" src="images/investIQ_logo.png" alt="InvestIQ" />
   <span class="iq-eyebrow">English · 5 parts</span>
   <h1 class="iq-title">Building a Trading System with an AI Team</h1>
   <p class="iq-sub">A non-specialist's end-to-end algorithmic trading system, built with an LLM-based AI team and analyzed <strong>honestly</strong>. Use the sidebar to navigate, or pick a part below.</p>

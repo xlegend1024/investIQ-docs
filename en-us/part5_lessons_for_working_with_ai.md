@@ -17,13 +17,14 @@ nav_order: 10
 
 ## Summary
 
-- What building a trading system with AI taught a non-specialist was less how to find alpha and more
-  how not to fool oneself.
-- Five lessons: ① lock criteria before seeing results (pre-registration), ② trust the authoritative
-  record over the convenient one, ③ separate the analysis universe from the trading universe,
-  ④ hard-code your hard caps, ⑤ build a veto into the automated pipeline.
-- For decision-makers: AI produces answers quickly, but designing the structure that can be wrong —
-  and that catches itself — remains a human responsibility.
+- What building a trading system with AI taught a non-specialist was less "with AI you can build
+  anything" and more "building it well is not the same as reaching the goal."
+- Four lessons: ① even a non-specialist investor, using AI well, can build a mechanical stock-trading
+  program, ② for development productivity and consistency you must adopt multi-agent (harness)
+  collaboration-and-review techniques, ③ use memory to stop the same bugs from recurring, ④ a program
+  running as intended does not mean the goal was met — a domain expert's design must come first.
+- For decision-makers: AI produces answers quickly, but judging whether that output meets the real
+  objective, and designing for it, remains a human responsibility.
 
 ---
 
@@ -51,59 +52,46 @@ independence — original author locked out on rejection — is the structural d
 
 ---
 
-## 2. The five lessons
+## 2. The four lessons
 
-### Lesson ① Lock your criteria before seeing the results
+### Lesson ① Even a non-specialist investor, using AI well, can build a mechanical trading program
 
-The news study (Part 4) fixed its hypotheses, tests, and acceptance criteria in a document before
-the data was examined (pre-registration). Because the criteria were locked, the honest outcome
-— a directionally consistent but **underpowered, unconfirmed** signal — could be reported without
-moving the goalposts. AI tries many hypotheses quickly; without pre-registration it will eventually
-find something that looks good by chance, and that artifact will be mistaken for a discovery.
+InvestIQ was started by a stock/quant non-specialist and grew into a complete automated trading
+program — from data ingestion through symbol selection, portfolio optimization, and order execution.
+The AI team filled the gap of expert knowledge: the non-specialist decided "what is wanted" and
+"what to approve," while the AI filled in the implementation detail. The first lesson is that, used
+well, AI lets a single non-specialist build the kind of mechanical system that used to require a team.
 
-### Lesson ② Trust the authoritative record over the convenient one
+### Lesson ② You must adopt multi-agent (harness) collaboration and review
 
-The local event journal recorded that orders were sent but not the prices they filled at. The
-convenient local data was incomplete. The resolution was to go to the **broker's own filled-order
-record** — the Alpaca API returns the actual fills — and rebuild the loss analysis on it. The
-lesson: a convenient local log is not the source of truth. When a local artifact and the
-authoritative system disagree, build on the authoritative one.
+For development productivity and consistency, do not rely on a single agent; you must adopt a
+structure (a harness) in which several agents with separated roles collaborate and review each
+other's work. As seen in Section 1, separating the implementing agent, the reviewing agent, and the
+validation agent prevents the echo chamber where "an author approves their own work." Compared with
+using a single agent alone, having multiple agents cross-check in distinct roles produces more
+precise, more consistent results.
 
-### Lesson ③ Separate the analysis universe from the trading universe
+### Lesson ③ Use memory to stop the same bugs from recurring
 
-News mentions thousands of strings; few resolve to tradable tickers. The rebuilt study scoped its
-universe to the **symbols actually traded**, keeping the analysis aligned to real decisions and
-avoiding the selection bias of mixing a wide inference universe with a narrow trading one. "Symbols
-usable for analysis" and "symbols you may actually hold" are different populations.
+Working with AI, the same class of bug tends to come back (the unit-conversion bug and the
+`sell_short` bug in Part 4 are exactly such cases). To prevent this you need a memory structure that
+"remembers" the work done and the mistakes already made. Actively using the various open-source tools
+that record and recall work history, decisions, and bug history — so the same mistake is not repeated
+twice — is strongly recommended.
 
-### Lesson ④ Hard-code your hard caps
+### Lesson ④ Running as intended does not mean the goal was met — a domain expert's design must come first
 
-Part 4 showed the entire period loss came from a single-name tail (ASTH, larger than the whole net
-result). The defense is structural: a per-name realized-loss cap and exposure ceiling, enforced on
-the execution path, not expressed as a soft penalty in an optimizer's objective. An optimizer does
-whatever is not explicitly blocked.
-
-### Lesson ⑤ Build a veto into the automated pipeline
-
-In a system that is automated end to end, the veto must live in **code**, not in a human click. HMAC
-tokens, fail-closed defaults, and per-name hard caps exercise the veto at the one step where money
-moves. The human controls only the switches above it — the kill switch and the live-capital arming —
-not individual orders. Full automation is not the danger; **automation without a veto** is.
+A program being well-built and running as designed does not mean it achieved its real goal.
+InvestIQ's purpose was to generate profit, but the actual result was a loss. So while building with
+AI can produce a "well-functioning system," there is no guarantee it leads to a "successful project."
+The closing lesson of this experiment is that, whatever the goal, a domain expert's design must come
+first before entering AI-driven implementation.
 
 ---
 
-## 3. A practical checklist
-
-| Stage | Question | The trap |
-|---|---|---|
-| Hypothesis | Were the criteria written before seeing the data? | Changing the hypothesis after seeing results (HARKing) |
-| Data | Is this the authoritative record or a convenient copy? | Trusting an incomplete local log |
-| Universe | Is the analysis set the same as the trading set? | Selection bias from mixing the two |
-| Sizing | Are caps hard constraints on the execution path? | Trusting the optimizer to self-diversify |
-| Execution | Is there a veto at the step where money moves? | Automation where money moves with no coded veto |
-
-The throughline of the series: the value was not a profitable strategy — the realized result was a
-near-break-even loss — but a **repeatable method for being honestly wrong**. For a non-specialist,
-that method, enforced through an AI team that checks itself, is the durable output.
+The throughline of the series: the value this experiment leaves behind was not a profitable strategy
+— the realized result was a near-break-even loss — but the demonstration that a non-specialist, with
+an AI team, can build a precise system, and at the same time that such a system reaching its goal
+still requires a domain expert's design to come first.
 
 

@@ -8,6 +8,7 @@ permalink: /ko-kr/
 # 한국어 시리즈
 
 <div class="iq-hero" markdown="0">
+  <img class="iq-logo" src="images/investIQ_logo.png" alt="InvestIQ" />
   <span class="iq-eyebrow">한국어 · 5부작</span>
   <h1 class="iq-title">AI 팀과 함께 만든 트레이딩 시스템</h1>
   <p class="iq-sub">투자 비전문가가 LLM 기반 AI 팀과 함께 만든 end-to-end 알고리즘 트레이딩 시스템을 <strong>정직하게</strong> 분석한 기록. 왼쪽 사이드바로 이동하거나 아래에서 편을 선택하세요.</p>
