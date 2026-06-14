@@ -4,38 +4,40 @@ parent: English
 nav_order: 4
 ---
 
-# Part 2.3 — Control-Group Comparison: What the Selection Means, and Where to Go Next
+# Part 2.3 — Comparing Universe Candidates with Excluded Names
 
 [Series Home (English)](../README.md) | [한국어 README](../README_kokr.md) | [이 문서 한국어](../ko-kr/part2_3_control_comparison.md)
 
 > *Series: Building an Algorithmic Trading System as an Investing Novice, with an AI Team (Part 2.3 of 5)*
 >
-> **Scope and limits.** A quasi-experiment on Alpaca paper-account data, single window. This sub-part
-> first decomposes a backtest to show the apparent edge lives in the Part 2.2 selection stage, then
-> tests whether that selection has real forward skill, using a control group of non-traded symbols and
-> a placebo window, and draws the strategic direction that follows.
+> **Scope and limits.** A quasi-experiment on Alpaca paper-account data, over a single window. This
+> part first decomposes a backtest to show that most of the apparent performance comes from the
+> universe selection stage described in Part 2.2. It then tests whether that selection has genuine
+> forward predictive power, using a control group of non-traded symbols and a placebo window, and
+> draws the strategic direction that follows.
 
 ---
 
 ## Summary
 
-- First, decomposing a "rank by sentiment → hold N days" backtest shows that most of the apparent
-  edge is not the daily signal but the **selection stage Part 2.2 described** — which symbols are in
-  the universe at all.
-- We built a **control group**: the symbols the news pipeline covered but the system did **not**
-  trade — including a deliberately **negative-sentiment** subset — and compared them to the traded
-  names over the trading window **and the 44 days before trading began**.
-- The traded universe massively outperformed the control in the trading window (+20pp), **but it had
-  already outperformed by +14pp before we traded it.** The clean difference-in-differences estimate
-  of forward skill is **not statistically significant.**
-- Conclusion: the selection mostly **rode pre-existing momentum**, it did not demonstrably
-  **predict** it. Yet the fact that a non-specialist's pipeline — news sentiment plus a few rules —
-  filled a previously empty watchlist with **names the market was actually interested in, with live
-  momentum** is not mere coincidence; it sits between "significant" and "meaningless."
+- Decomposing a backtest that ranks by sentiment and holds for N days shows that most of the apparent
+  performance comes not from the daily signal but from the selection stage described in Part 2.2, that
+  is, which symbols are included in the universe in the first place.
+- To test whether the selected candidates carry meaning, we built a control group of symbols the news
+  pipeline covered but the system did not trade, including a deliberately negative-sentiment subset.
+  We compared these to the traded names over both the trading window and the 44 days before trading
+  began.
+- The traded group outperformed the control by a wide margin during the trading window (+20pp), but
+  it had already been ahead by +14pp before trading began. The trend-adjusted difference-in-differences
+  estimate is not statistically significant.
+- In conclusion, the selected names mostly rode pre-existing momentum rather than predicting it. Even
+  so, the fact that a non-specialist, using only news sentiment and a few rules, assembled a candidate
+  pool filled with the momentum names the market was actually paying attention to is hard to dismiss
+  as coincidence. The result sits between meaningful and meaningless.
 
 ---
 
-## 1. The apparent edge lives in the selection stage — a backtest decomposition
+## 1. The apparent performance comes from the selection stage
 
 Part 2.2 showed that InvestIQ selects a small universe tilted toward momentum and sentiment. So how
 good does that universe look if you run the strategy a reader might imagine? We simulated it with
@@ -82,7 +84,7 @@ alone, the two are indistinguishable — the rest of this part answers with a co
 
 ---
 
-## 2. The design: treated vs control, before vs after
+## 2. Design: treated and control groups, before and after
 
 To ask whether selecting these names showed skill, we need to know how they would have looked
 *without* the selection. So we set up a quasi-experiment:
@@ -99,9 +101,9 @@ design was fixed before results were inspected.
 
 ---
 
-## 3. The naive comparison looks decisive — then collapses
+## 3. The naive comparison appears to favor the traded group
 
-In the trading window, the traded names crushed the control:
+In the trading window, the traded names substantially outperformed the control:
 
 | Group | n | POST return |
 |---|---:|---:|
@@ -130,7 +132,7 @@ winners.**
 
 ---
 
-## 4. Difference-in-differences: no significant forward skill
+## 4. Difference-in-differences shows no significant forward predictive power
 
 The honest estimate nets out each group's fixed level and the pre-existing trend:
 `DiD = (POST gap) − (PRE gap)`.
@@ -155,7 +157,7 @@ prediction. It is consistent with the DiD verdict and cannot upgrade it.
 
 ---
 
-## 5. What the selection means — not prediction, but not coincidence
+## 5. What the selection means: not prediction, but not coincidence
 
 What the statistics above knock down is exactly one thing: **prediction**. Most of the treated
 group's post-period lead (~69%) already existed before any trade, and the trend-removed
