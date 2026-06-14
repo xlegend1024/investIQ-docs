@@ -27,8 +27,8 @@ search_exclude: true
 |---|---|---|---|
 | **1** | [배경 — 왜, 누가, 무엇으로](./ko-kr/part1_background_and_setup.md) | 비전문가 + AI 팀(Squad) + 14개 마이크로서비스 페이퍼 MVP | 아키텍처 / 안전 바닥 플로차트 |
 | **2.1** | [데이터 — 수집 파이프라인과 진실의 원천](./ko-kr/part2_1_data_pipeline.md) | 멀티소스 수집 · 단일 Alpaca 가격 소스 · 브로커 체결 기록 | 커버리지·감성 분포 차트 |
-| **2.2** | [유니버스 선택 — 성과는 어디에 있는가](./ko-kr/part2_2_universe_selection.md) | 비용 포함 N일 보유 백테스트 · 엣지의 대부분은 일상 신호가 아니라 유니버스 표류 | 호라이즌별 자산곡선, 분해 |
-| **2.3** | [대조군 비교와 전략적 방향](./ko-kr/part2_3_control_comparison.md) | 거래군 vs 대조군 · placebo(거래 이전) 윈도우 · 이중차분 · 선택은 스킬이 아니라 모멘텀을 올라탐 | 그룹별 사전/사후, DiD, dose-response |
+| **2.2** | [유니버스 선택 — InvestIQ는 무엇을 거래하는가](./ko-kr/part2_2_universe_selection.md) | watchlist-intel 권한 · 측이 박힌 발괴→승격→자동승인→로테이션 · 레짐 게이트 | 선택 파이프라인 플로차트 |
+| **2.3** | [대조군 비교와 전략적 방향](./ko-kr/part2_3_control_comparison.md) | 백테스트 분해 · 거래군 vs 대조군 · placebo(거래 이전) 윈도우 · 이중차분 · 선택은 스킬이 아니라 모멘텀을 올라타 | 호라이즌별 자산곡선, 그룹밄 사전/사후, DiD |
 | **3.1** | [전략 — 종목 점수 매기기 (Spec-070)](./ko-kr/part3_1_scoring.md) | 컴포지트 점수: 모멘텀/기술 + 뉴스 감성 × 풀백 배수 | 컴포지트 점수 플로차트 |
 | **3.2** | [Post-Market 파이프라인과 포트폴리오 최적화](./ko-kr/part3_2_postmarket_pipeline.md) | 야간 post-market 배치 · Markowitz / Risk Parity · 품질 게이트 · 집중도 측 | 파이프라인 + 최적화 플로차트 |
 | **3.3** | [실제 할당, 한 줄씩 읽기](./ko-kr/part3_3_real_allocation_example.md) | 실제 2026-06-12 리밸런싱 플랜 · 31개 보유 종목 · 정수 주식 거래 · 리스크 게이트 3건 차단 | 실제 목표 비중 바, 14일 비중 히트맵 |

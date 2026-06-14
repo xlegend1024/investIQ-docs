@@ -27,8 +27,8 @@ search_exclude: true
 |---|---|---|---|
 | **1** | [Background — Why, Who, With What](./en-us/part1_background_and_setup.md) | Non-specialist + AI team (Squad) + 14-microservice paper-trading MVP | Architecture / safety-floor flowcharts |
 | **2.1** | [Data — Ingestion Pipeline & Source of Truth](./en-us/part2_1_data_pipeline.md) | Multi-source ingestion · single Alpaca price source · the broker's filled-order record | Coverage and sentiment-distribution charts |
-| **2.2** | [Universe Selection — Where Performance Lives](./en-us/part2_2_universe_selection.md) | Cost-aware hold-N-days backtest · most "edge" is universe drift, not the daily signal | Equity-by-horizon, decomposition |
-| **2.3** | [Control-Group Comparison & Strategic Direction](./en-us/part2_3_control_comparison.md) | Treated vs control · placebo (pre-trading) window · difference-in-differences · selection rode momentum, not skill | Pre/post by group, DiD, dose-response |
+| **2.2** | [Universe Selection — How InvestIQ Picks What to Trade](./en-us/part2_2_universe_selection.md) | watchlist-intel authority · capped discovery → promotion → auto-approve → rotation · regime gate | Selection-pipeline flowchart |
+| **2.3** | [Control-Group Comparison & Strategic Direction](./en-us/part2_3_control_comparison.md) | Backtest decomposition · treated vs control · placebo (pre-trading) window · difference-in-differences · selection rode momentum, not skill | Equity-by-horizon, pre/post by group, DiD |
 | **3.1** | [Strategy — Scoring Symbols (Spec-070)](./en-us/part3_1_scoring.md) | The composite score: momentum/technical + news sentiment × pullback multiplier | Composite-score flowchart |
 | **3.2** | [Post-Market Pipeline & Portfolio Optimization](./en-us/part3_2_postmarket_pipeline.md) | Nightly post-market batch · Markowitz / Risk Parity · quality gate · concentration cap | Pipeline + optimization flowcharts |
 | **3.3** | [A Real Allocation, Read Line by Line](./en-us/part3_3_real_allocation_example.md) | The actual 2026-06-12 rebalancing plan · 31 held names · whole-share trades · 3 risk-gate blocks | Real target-weight bar, 14-day weight heatmap |

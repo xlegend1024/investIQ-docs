@@ -11,13 +11,17 @@ nav_order: 4
 > *Series: Building an Algorithmic Trading System as an Investing Novice, with an AI Team (Part 2.3 of 5)*
 >
 > **Scope and limits.** A quasi-experiment on Alpaca paper-account data, single window. This sub-part
-> tests whether the universe selection in Part 2.2 has real forward skill, using a control group of
-> non-traded symbols and a placebo window, then draws the strategic direction that follows.
+> first decomposes a backtest to show the apparent edge lives in the Part 2.2 selection stage, then
+> tests whether that selection has real forward skill, using a control group of non-traded symbols and
+> a placebo window, and draws the strategic direction that follows.
 
 ---
 
 ## Summary
 
+- First, decomposing a "rank by sentiment → hold N days" backtest shows that most of the apparent
+  edge is not the daily signal but the **selection stage Part 2.2 described** — which symbols are in
+  the universe at all.
 - We built a **control group**: the symbols the news pipeline covered but the system did **not**
   trade — including a deliberately **negative-sentiment** subset — and compared them to the traded
   names over the trading window **and the 44 days before trading began**.
@@ -30,7 +34,54 @@ nav_order: 4
 
 ---
 
-## 1. The design: treated vs control, before vs after
+## 1. The apparent edge lives in the selection stage — a backtest decomposition
+
+Part 2.2 showed that InvestIQ selects a small universe tilted toward momentum and sentiment. So how
+good does that universe look if you run the strategy a reader might imagine? We simulated it with
+transaction costs: each formation day, rank the universe by lagged news sentiment, buy the top
+tercile, hold N days, liquidate, re-form.
+
+| Hold | Long-only | SPY | Per-trade NW t | Hit rate |
+|---|---:|---:|---:|---:|
+| 1d | +8.1% | +4.2% | 0.98 | 65% |
+| 3d | +6.9% | +4.5% | 1.88 | 68% |
+| 5d | +21.7% | +8.0% | 1.84 | 77% |
+| 10d | +26.9% | +8.0% | **2.61** | 82% |
+
+![Equity by horizon](./images/F1_equity_by_horizon.png)
+*Figure. Realizable equity (form → hold N days → liquidate) at 10 bps cost. Long-only (green) sits
+above SPY (grey dashed) at every horizon — but note the orange line.*
+
+Taken alone, the 10-day result — +27% vs SPY +8%, a per-trade t of 2.61 — looks like a working
+strategy. The decomposition is where it unravels. Add an **equal-weight whole-universe** benchmark
+(hold all 133 names equally) and a **market-neutral long-short** (long top tercile, short bottom) to
+separate the sentiment signal from the universe's drift and market beta.
+
+| Hold | Long-only | Equal-weight universe | **Selection alpha** | Long-short (signal-only) |
+|---|---:|---:|---:|---:|
+| 1d | +8.1% | +3.6% | +4.5% | −0.1% |
+| 3d | +6.9% | +7.0% | **−0.1%** | −0.0% |
+| 5d | +21.7% | +16.7% | +5.0% | +8.4% |
+| 10d | +26.9% | +16.8% | +10.1% | +15.7% |
+
+Two facts stand out: (1) **the 133-name universe itself beat SPY** (+16.8% vs +8.0% at 10 days) —
+simply because this small/mid-cap universe rose more than the index, with no sentiment selection. (2)
+**The day-to-day signal contributes little and inconsistently** — selection alpha is zero at the
+pre-registered 3-day horizon, and the clean long-short is negative at 10 days (−3.8% per trade).
+
+```
+Long-only total  =  market (SPY)  +  universe selection  +  day-to-day signal
+   +27%          ≈    +8%         +      +17% (largest)   +    ~0%
+```
+
+So most of the apparent edge is not in ranking by sentiment each day but in **which symbols are in
+the universe at all** — the selection stage Part 2.2 described. Is that selection **skill** (picked
+names that would rise) or **momentum it rode** (names already rising)? In-sample, on the traded names
+alone, the two are indistinguishable — the rest of this part answers with a control group.
+
+---
+
+## 2. The design: treated vs control, before vs after
 
 To ask whether selecting these names showed skill, we need to know how they would have looked
 *without* the selection. So we set up a quasi-experiment:
@@ -47,7 +98,7 @@ design was fixed before results were inspected.
 
 ---
 
-## 2. The naive comparison looks decisive — then collapses
+## 3. The naive comparison looks decisive — then collapses
 
 In the trading window, the traded names crushed the control:
 
@@ -78,7 +129,7 @@ winners.**
 
 ---
 
-## 3. Difference-in-differences: no significant forward skill
+## 4. Difference-in-differences: no significant forward skill
 
 The honest estimate nets out each group's fixed level and the pre-existing trend:
 `DiD = (POST gap) − (PRE gap)`.
@@ -103,7 +154,7 @@ prediction. It is consistent with the DiD verdict and cannot upgrade it.
 
 ---
 
-## 4. What the selection means
+## 5. What the selection means
 
 Collecting and trading only a sentiment-selected slice of NASDAQ leaves a **large, measurable, and
 mostly spurious** statistical footprint:
@@ -123,7 +174,7 @@ skill.**
 
 ---
 
-## 5. Strategic direction
+## 6. Strategic direction
 
 The finding is not a dead end — it is a redirection. It tells us where a real edge would have to come
 from and how to test it honestly:

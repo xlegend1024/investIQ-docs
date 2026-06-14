@@ -4,112 +4,201 @@ parent: English
 nav_order: 3
 ---
 
-# Part 2.2 — Universe Selection: Where the Performance Actually Lives
+# Part 2.2 — Universe Selection: How InvestIQ Decides What to Trade
 
 [Series Home (English)](../README.md) | [한국어 README](../README_kokr.md) | [이 문서 한국어](../ko-kr/part2_2_universe_selection.md)
 
 > *Series: Building an Algorithmic Trading System as an Investing Novice, with an AI Team (Part 2.2 of 5)*
 >
 > **Scope and limits.** Realized and backtested figures from an Alpaca paper account, single window.
-> This sub-part shows that most of the apparent edge sits in **which symbols entered the universe**,
-> not in the daily sentiment ranking. Part 2.3 then tests whether that selection has real skill.
+> This sub-part explains, against the actual code, **how InvestIQ actually builds its trading
+> universe** — discovery → promotion → active universe → rotation → regime gate — and shows the
+> trading set that results. Whether that selection has real skill is tested against a control group
+> in Part 2.3.
 
 ---
 
 ## Summary
 
-- The analysis universe is the **133 symbols the system actually traded** — a small,
-  sentiment-correlated subset of NASDAQ, not a random sample.
-- A cost-aware backtest of "rank by sentiment → hold N days → liquidate" beats SPY in-sample, and
-  looks better the longer it holds — but once decomposed, **most of that outperformance is the
-  universe's own drift, not the day-to-day signal.**
-- This relocates the question: the interesting effect is in the **selection stage** (which symbols
-  are in the universe), which Part 2.3 examines directly.
+- "What to trade" is the single authority of the **watchlist-intel** service in InvestIQ. It admits
+  and removes symbols through a **capped rule pipeline**, not free discretion.
+- The flow is **discovery (news-intel) → promotion-candidate pool → auto-approve → active universe
+  (≤15 at once) → rotation**, with hard caps at every stage: daily auto-approve **3**, per-sector
+  **5**, candidate pool total **55**, active **15**.
+- On top of that, a **regime gate** (DIA·SPY·VIXY proxies) blocks new buys in a down-tape.
+- Because the active universe is capped at 15 concurrent names, the pipeline cycled through them so
+  that **133 symbols were traded cumulatively** over the 44-day window — the population analyzed in
+  Parts 2.3 and 4.
 
 ---
 
-## 1. The universe is a selection, not a sample
+## 1. The universe is owned by an authority service
 
-A novice trap is conflating the **analysis population** with the **trading set**. News mentions
-thousands of strings; most never resolve to a tradable US ticker. We scoped the studies to the
-**133 symbols the system actually traded** (two out-of-scope names excluded).
+In InvestIQ the trading universe is not a config value scattered somewhere; it is the authority of a
+single service, **watchlist-intel** (8018). It is the only path by which a symbol is admitted,
+enabled, or removed, and it also classifies the market regime. The key point is that it runs on
+**rules and caps fixed in code**, not on a human's or an LLM's discretion.
 
-This trades breadth for relevance — the operating question is "did the approach help on the names we
-acted on," not "does sentiment work across all of NASDAQ." But it carries a hidden risk: those 133
-names were not drawn at random. They are the survivors of a **sentiment-correlated selection**
-(news coverage → watchlist promotion → actually traded). That selection, not the signal, turns out
-to carry most of the measured performance.
-
----
-
-## 2. The "hold N days" strategy, tested with costs
-
-To make the question concrete, we ran the literal strategy a reader might imagine: each formation
-day, rank the universe by lagged news sentiment, buy the top tercile, hold N days, liquidate,
-re-form — with round-trip transaction costs.
-
-| Hold | Long-only | SPY | Per-trade NW t | Hit rate |
-|---|---:|---:|---:|---:|
-| 1d | +8.1% | +4.2% | 0.98 | 65% |
-| 3d | +6.9% | +4.5% | 1.88 | 68% |
-| 5d | +21.7% | +8.0% | 1.84 | 77% |
-| 10d | +26.9% | +8.0% | **2.61** | 82% |
-
-![Equity by horizon](./images/F1_equity_by_horizon.png)
-*Figure. Realizable equity (form → hold N days → liquidate) at 10 bps cost. Long-only (green) sits
-above SPY (grey dashed) at every horizon — but note the orange line.*
-
-Taken alone, the 10-day result — +27% vs SPY +8%, a per-trade t of 2.61 — looks like a working
-strategy. The decomposition is where it unravels.
-
----
-
-## 3. Decomposition: the signal is the small part
-
-Add an **equal-weight whole-universe** benchmark (hold all 133 names equally) and a **market-neutral
-long-short** (long top tercile, short bottom). These separate the sentiment signal from the
-universe's own drift and from market beta.
-
-| Hold | Long-only | Equal-weight universe | **Selection alpha** | Long-short (signal-only) |
-|---|---:|---:|---:|---:|
-| 1d | +8.1% | +3.6% | +4.5% | −0.1% |
-| 3d | +6.9% | +7.0% | **−0.1%** | −0.0% |
-| 5d | +21.7% | +16.7% | +5.0% | +8.4% |
-| 10d | +26.9% | +16.8% | +10.1% | +15.7% |
-
-Two facts stand out:
-
-1. **The 133-name universe itself beat SPY** — +16.8% vs +8.0% at the 10-day cadence. A large part
-   of "beating the market" is simply that this small/mid-cap universe rose more than the index,
-   with no sentiment selection involved.
-2. **The day-to-day signal contributes little and inconsistently.** Selection alpha (long-only minus
-   the equal-weight universe) is **zero at the pre-registered 3-day horizon**, and the clean
-   market-neutral long-short is weak everywhere and **negative at 10 days** (−3.8% per trade).
-
-The breakdown of the headline 10-day long-only return:
-
-```
-Long-only total  =  market (SPY)  +  universe selection  +  day-to-day signal
-   +27%          ≈    +8%         +      +17% (largest)   +    ~0%
+```mermaid
+flowchart LR
+    NI["news-intel<br/>leader promotion gate"] -->|push candidate| INTAKE["intake<br/>(paper · kill-switch · held guards)"]
+    INTAKE --> POOL["promotion-candidate pool<br/>sector cap 5 · total cap 55 · 7d TTL"]
+    POOL --> AUTO["auto-approve<br/>daily 3 · FIFO"]
+    AUTO --> ACTIVE["active universe<br/>≤15 at once"]
+    ACTIVE -->|when full| ROT["rotation<br/>evict lowest score"]
+    ROT --> ACTIVE
+    REGIME["regime gate<br/>DIA · SPY · VIXY"] -.blocks buys in down-tape.-> ACTIVE
 ```
 
-So the result is not mainly about ranking by sentiment each day. It is about **which symbols are in
-the universe at all** — the selection stage.
+Below, each stage follows the rules exactly as verified in the code.
 
 ---
 
-## 4. Why this reframes everything
+## 2. Discovery — the news-intel leader promotion gate
 
-If most of the performance lives in selection, the right object of study is **the universe choice**,
-not the daily signal. And that immediately raises a harder question: when our traded universe beats
-NASDAQ, is that **skill** (we picked names that would go up) or **momentum we rode** (we picked names
-that were already going up)? In-sample, on the traded names alone, the two are indistinguishable.
+Candidates originate in news-intel. From the multi-source news (Part 2.1) it accumulates a **leader
+score** and a **sentiment score** per symbol, turns each into an EWMA z-score, and computes a
+composite:
 
-Answering it requires a **control group** — the symbols the pipeline saw but did **not** trade — and
-a **before/after** comparison. That is exactly what Part 2.3 does.
+$$\text{composite} = 0.6 \times z_{\text{ewma}}(\text{leader}) + 0.4 \times z_{\text{ewma}}(\text{sentiment})$$
 
-> **Next:** Part 2.3 builds a control group of non-traded names (including a deliberately
-> negative-sentiment set) and uses the 44 days **before** trading as a placebo, to separate genuine
-> selection skill from pre-existing momentum.
+It then applies a **cross-section p80 gate** — a name must be in the top quintile (80th percentile)
+of that day's candidate cohort to pass. A warm-up fallback handles short histories:
+
+| History n | Behavior |
+|---|---|
+| n < 5 | reject all (`warmup_zero`) |
+| 5 ≤ n < 10 | fixed z ≥ 1.0 instead of cohort p80 |
+| 10 ≤ n < 20 | standard p80, but daily cap reduced 3 → 2 |
+| n ≥ 20 | standard |
+
+A separate path, **sector-trend auto-enrollment**, promotes names that sit in a
+positive-momentum sector and clear a threshold of positive-sentiment days over a 14-day window. So
+discovery itself is **biased toward names that are good on both momentum and sentiment** — the origin
+of the selection effect Part 2.3 will test.
+
+---
+
+## 3. Promotion — capped auto-approval
+
+A discovered candidate is pushed to watchlist-intel's **intake** endpoint and enters the candidate
+pool. From here, safety guards and hard caps apply:
+
+- **Paper-only · kill-switch guards:** if the account is not paper or the kill switch is engaged,
+  intake itself is rejected (503).
+- **Held-symbol protection:** a symbol already held is not re-admitted as a candidate — unless its
+  reactivation score is ≥ 0.75.
+- **Sector cap 5 · total cap 55:** exceeding 5 per sector or 55 across the pool yields `rejected_cap`.
+  Candidates are held as `pending` with a **7-day TTL**.
+
+Approval is a separate **auto-approve** stage (`auto_approve_pending`):
+
+- It approves **up to 3 per UTC trading day** (`DAILY_AUTO_CAP`), **FIFO** (earliest-discovered
+  first).
+- Each run must re-pass paper-only, kill-switch, rebalancing-lock, and state-reachable (held-symbol
+  lookup) guards; if any fail, the whole day's auto-approval is skipped.
+- Approved entries are recorded as `reviewedBy = "auto-approve"`, and the operator can review/reject
+  them within the 24h TTL.
+
+In short, "which symbols become tradable today" is not an ad-hoc human call but is structurally
+limited to those that **pass the paper/kill-switch/held guards, within the daily-3, sector-5, total-55
+caps.**
+
+---
+
+## 4. The active universe and rotation
+
+The active universe is capped at **15 concurrent symbols**. This scoring and rotation run not as a
+separate batch but inside the **premarket-snapshot cycle** (pre-open, 04:00·08:35 ET): auto-approve
+runs just before the snapshot is built, and if a new name needs a slot while 15 are already enabled,
+rotation is triggered on the spot to evict the weakest name. It has nothing to do with the news
+pipeline or the nightly post-market batch.
+
+The rotation score combines two signals over a 20-day window, **each min-max normalized to `[0,1]`
+across the active names**, then weighted:
+
+$$\text{rotation} = 0.6 \times \widehat{\text{buy\_freq}} + 0.4 \times \widehat{\text{realized\_pnl}}$$
+
+- **buy_freq:** the fraction of days the name received a `buy` recommendation in watchlist-intel's own
+  recent premarket snapshots. That recommendation comes from **technical indicators** (trend,
+  momentum, data freshness), not news sentiment.
+- **realized_pnl:** **realized PnL in dollars** accumulated over the 20-day window from
+  logging-storage execution reports — not a percentage return.
+- A name must accrue at least 10 active days and have no open positions to be eligible (guards); after
+  normalization the lowest-scoring name is evicted.
+
+Because both are `[0,1]` relative ranks, rotation keys off **relative weakness among the current
+active names**, not absolute performance. Because of this cap + rotation, the active universe is
+always small (≤15), while **the cumulative count of traded names grows much larger** over time — good
+names come in, weak ones drop out.
+
+---
+
+## 5. The regime gate — the top-level switch on when to buy
+
+Above symbol selection sits a market-wide switch. watchlist-intel classifies the regime from
+DIA·SPY·VIXY proxies:
+
+| Regime | Avg-momentum threshold | Effect |
+|---|---|---|
+| Strong Bull | ≥ +3.0 | normal participation |
+| Mild Bull | ≥ +1.0 | normal participation |
+| Neutral | (between) | reduced participation |
+| Mild Bear | < −1.0 | **new buys blocked** |
+| Severe Bear | < −3.0 | **new buys blocked + defensive** |
+
+VIXY adds a risk-direction reading (`rising-risk` · `stabilizing` · `neutral`) from its 3-day average
+change and 5-day momentum, and participation, stop-loss, and take-profit multipliers vary by regime.
+So even when a name passes discovery and promotion, **in a bearish regime new buying is blocked
+outright** — the final gate on universe selection.
+
+---
+
+## 6. This universe is not traded directly — candidates vs actual trading
+
+An important distinction: watchlist-intel's active universe only decides **what to *consider***; it
+does not trigger trades by itself. The symbols actually traded intraday go through two more stages.
+
+```mermaid
+flowchart LR
+    WL["watchlist-intel<br/>active universe ≤15<br/>(candidate pool)"] -->|enabled symbols| PM["post-market batch<br/>(quant-research)<br/>screener + optimization"]
+    PM -->|applied plan| TW["target-weights<br/>(written by state)"]
+    TW -->|read at session open| EX["intraday delta executor<br/>(what is actually traded)"]
+    EX --> ORD["orders → execution"]
+```
+
+- **Candidate pool (watchlist-intel):** enabled watchlist + held + promotion candidates + benchmarks
+  become the **input universe** for the post-market batch.
+- **Actual target (post-market, Part 3.2):** the nightly batch optimizes portfolio weights over that
+  universe, and state writes them as **target-weights** — the canonical handoff point.
+- **Intraday execution:** at session open the executor reads those target-weights and orders only the
+  **delta from current holdings**. It does not discover new symbols intraday.
+
+In one line: watchlist-intel is the "roster," the post-market optimization is the "starting lineup and
+weights," and the intraday executor fills the gap between that lineup and current holdings.
+
+---
+
+## 7. So the result — 133 symbols
+
+Running this pipeline over 44 trading days yields **the 133 symbols the system actually traded** (two
+out-of-scope names excluded). Because the active universe is capped at 15 concurrently, 133 is not a
+single-moment holding but the trading set **accumulated across the whole window** as
+discovery→promotion→rotation cycled through it. These 133 names are the population for the Part 2.3
+control test and the Part 4 loss analysis.
+
+One property matters here: these 133 names are **not a random sample.** Discovery is biased toward
+good-momentum, good-sentiment names (§2), new entries are blocked in a down-tape (§5), and weak names
+are rotated out (§4). So the set is structurally tilted toward "active, high-sentiment,
+high-momentum small/mid-caps."
+
+That sets up the precise question for the next part: when a universe selected this way beats the
+index, is that **skill in the picking**, or **momentum it rode** (names already going up)? In-sample,
+on the traded names alone, the two are indistinguishable.
+
+> **Next:** Part 2.3 first decomposes a "rank by sentiment → hold N days" backtest to show that most
+> of the apparent edge lives in the **selection stage**, not the daily signal — then builds a control
+> group of non-traded names and a pre-trading placebo window to test directly whether that selection
+> has genuine forward skill, or merely rode pre-existing momentum.
 
 

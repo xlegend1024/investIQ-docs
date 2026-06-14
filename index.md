@@ -46,7 +46,7 @@ permalink: /
   <a class="iq-card" href="en-us/part2_2_universe_selection.html">
     <span class="iq-card-num">Part 2.2</span>
     <span class="iq-card-title">Universe Selection</span>
-    <span class="iq-card-desc">Most "edge" is universe drift, not the daily signal.</span>
+    <span class="iq-card-desc">watchlist-intel: a capped discovery → promotion → rotation pipeline.</span>
     <span class="iq-card-alt">한국어 · 유니버스 선택 →</span>
   </a>
   <a class="iq-card" href="en-us/part2_3_control_comparison.html">
