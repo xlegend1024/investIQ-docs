@@ -1,5 +1,5 @@
 ---
-title: "3.1 Scoring (Spec-070)"
+title: "3.1 Scoring"
 parent: English
 nav_order: 5
 ---

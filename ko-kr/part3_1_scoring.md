@@ -1,5 +1,5 @@
 ---
-title: "3.1 종목 점수 (Spec-070)"
+title: "3.1 종목 점수"
 parent: 한국어
 nav_order: 5
 ---

@@ -15,10 +15,10 @@ nav_order: 9
 > real fills, not a proxy — but they cover one regime and one short window, so the attribution should
 > be read as a description of this experiment, not a general result. **The system is long-only by
 > design and did not run a short strategy** (a handful of incidental residual shorts in the record are
-> explained in Section 1). **Two numbers appear and must not be confused:** the account **balance
-> change of ≈ −$878** (the operator's equity moved from ~$25,000 to ~$24,122), and the **long-only
-> closed round-trip realized PnL of −$369.85** used for the per-name attribution below. Section 1
-> reconciles the two with a full equity bridge.
+> explained in Section 1). **There is one bottom line: at the current mark-to-market, the account's
+> equity changed by ≈ −$878** (the operator's equity moved from ~$25,000 to ~$24,122). The per-name
+> attribution below is built on one slice of that change — the **long-only closed round-trip realized
+> PnL of −$369.85** — which Section 1 ties back to the −$878 with a full equity bridge.
 
 ---
 
@@ -40,17 +40,16 @@ nav_order: 9
 
 ---
 
-## 1. The number — and reconciling it to the balance
+## 1. The result: current mark-to-market equity, −$878
 
-It is worth being precise, because two figures circulate and they measure different things.
+The result of this window is a single number: at the current mark-to-market, the account's **equity
+changed by about −$878** (≈$25,000 → ≈$24,122). The per-name attribution is built on one slice of
+that change: the **long-only closed round-trip realized PnL of −$369.85**, obtained by FIFO-matching
+buys to sells per symbol over the window. That figure measures *closed long trades only* — one
+component of the −$878, not a rival headline; the rest comes from the three components below.
 
-The account's **equity changed by about −$878** (≈$25,000 → ≈$24,122). The per-name analysis that
-follows is built on a narrower figure: the **long-only closed round-trip realized PnL of −$369.85**,
-obtained by FIFO-matching buys to sells per symbol over the window. That −$369.85 is correct for what
-it measures — *closed long trades only* — but it is **not** the balance change (−$878); the gap
-between the two comes from the three components below.
-
-Three components separate the two. They are computed by `reconcile_equity.py` and reconcile exactly:
+Three components bridge −$369.85 to −$878. They are computed by `reconcile_equity.py` and reconcile
+exactly:
 
 | Component | Amount | Why the round-trip figure misses it |
 |---|---:|---|
@@ -64,10 +63,8 @@ fills above are not a short strategy but **incidental residual shorts** — sell
 exceeded the position held at that moment — included here only so the equity bridge reconciles
 exactly.
 
-So the headline for the *account* is **−$878**; the headline for the *closed-long-trade attribution*
-is **−$369.85**. The rest of this part analyzes the latter (it is the clean, matched record), with
-the single caveat that short legs and open positions add roughly −$420 more that the attribution does
-not decompose.
+The rest of this part analyzes the clean, matched long record (−$369.85), with the single caveat that
+short legs and open positions add roughly −$420 more on top of it to reach the −$878 total.
 
 | Metric (long-only closed round-trips) | Value |
 |---|---|

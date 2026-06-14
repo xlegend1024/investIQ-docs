@@ -4,7 +4,7 @@ parent: 한국어
 nav_order: 1
 ---
 
-# 1편 — 배경: 왜, 누가, 무엇으로
+# 1편 — InvestIQ 배경
 
 [시리즈 홈 (한국어)](../README_kokr.md) | [English README](../README.md) | [This page in English](../en-us/part1_background_and_setup.md)
 
