@@ -10,26 +10,27 @@ nav_order: 6
 
 > *Series: Building an Algorithmic Trading System as an Investing Novice, with an AI Team (Part 3.2 of 5)*
 >
-> **Scope and limits.** Paper-account, single window. This sub-part covers the post-market batch
-> pipeline and the concept of portfolio optimization; Part 3.3 walks a real allocation from the
-> event log.
+> **Scope and limits.** A paper account, over a single window. This part covers the post-market batch
+> pipeline and the concept of portfolio optimization. Part 3.3 walks through a real allocation
+> recorded in the event log.
 
 ---
 
 ## Summary
 
-- After the close, a **post-market batch** runs nightly: it refreshes data, re-scores the universe,
-  optimizes weights, and produces a **rebalancing plan** for the next session.
-- Weights come from two optimizers — **Markowitz (mean-variance)** and **Risk Parity** — passed
-  through a **5-stage quality gate + Monte Carlo** validation and a **per-symbol concentration cap**.
+- After the close, a post-market batch runs each night. It refreshes data, re-scores the universe,
+  optimizes weights, and produces a rebalancing plan for the next session. That plan becomes the
+  basis for the following day's intraday trading.
+- Weights are produced by two optimizers, Markowitz (mean-variance) and Risk Parity, and pass through
+  a five-stage quality gate, Monte Carlo validation, and a per-symbol concentration cap.
 - This is the stage that turns per-symbol scores into an actual target portfolio.
 
 ---
 
 ## 1. The post-market batch pipeline
 
-The system does its heavy thinking **after the market closes**, when bars are final and there is no
-intraday pressure. Each night a batch advances through fixed stages, emitting a
+The system performs its batch computation **after the market closes**, when bars are final and there
+is no intraday pressure. Each night the batch advances through fixed stages, emitting a
 `PostMarketBatchStage.v1` event at each one so the whole run is auditable.
 
 ```mermaid
@@ -44,26 +45,27 @@ flowchart LR
     PLAN --> LOG["logging-storage<br/>(audit each stage)"]
 ```
 
-Running post-market matters for a non-specialist: it removes the temptation to react to intraday
-noise, it works on **completed** bars (no lookahead), and it makes the night's decision a single
-reviewable artifact rather than a stream of ad-hoc trades.
+Running the computation post-market brings clear benefits: it removes the temptation to react to
+intraday noise, it works only on completed bars so no lookahead can occur, and it consolidates the
+night's decision into a single reviewable artifact rather than a stream of ad-hoc trades.
 
-> **Note — universe management vs weight optimization are different layers.**
+> **Note: universe management and weight optimization are different layers.**
 > The active universe (watchlist-intel) of Part 2.2 and the weight optimization of this part are not
-> redundant — they are an **upper layer (universe management) and a lower layer (weight
-> optimization).** The weights are **today's execution plan**, fixed before the open; the active
-> universe is the **input-quality and rotation mechanism** that keeps producing good plans. The flow
-> is one-directional: watchlist-intel's enabled names (+ held, promotion candidates, benchmarks) form
-> this batch's **input universe**; the batch optimizes weights over it into **target-weights**; and
-> the intraday executor orders only the delta from current holdings. So even though the weights are
-> fixed first, keeping the input pool in shape for the next cycle is the role of the universe layer.
+> redundant; they divide into an upper layer (universe management) and a lower layer (weight
+> optimization). The weights are the day's execution plan, fixed before the open, while the active
+> universe is the input-quality and rotation mechanism that keeps producing good plans. The flow is
+> one-directional. watchlist-intel's enabled names, together with held positions, promotion
+> candidates, and benchmarks, form this batch's input universe; the batch optimizes weights over that
+> universe into target-weights; and the intraday executor orders only the delta from current
+> holdings. So even though the weights are fixed first, keeping the input pool in shape for the next
+> cycle is the role of the universe layer.
 
 ---
 
-## 2. Why optimization — and the concentration trap
+## 2. Why optimization
 
-Picking high-scoring symbols answers *what* to hold. Optimization answers *how much* of each — and
-this is where a novice gets hurt most, through **concentration**.
+Picking high-scoring symbols answers *what* to hold. Optimization computes *how much* of each to
+hold.
 
 ```mermaid
 flowchart LR
@@ -77,37 +79,40 @@ flowchart LR
 ```
 
 - **Markowitz (mean-variance)** chooses weights that maximize the Sharpe ratio given expected returns
-  and the covariance matrix. Left unconstrained, it tends to pile weight into a few names it believes
-  have the best risk-adjusted return.
-- **Risk Parity** instead allocates so each name contributes **equal risk**, producing a flatter,
-  more diversified book that does not depend on fragile return forecasts.
-- **5-stage quality gate + Monte Carlo** stress-tests the result by simulation before it is trusted.
+  and the covariance matrix. Left unconstrained, it tends to concentrate weight into a few names it
+  judges to have the best risk-adjusted return.
+- **Risk Parity** instead allocates so that each name contributes equal risk, producing a flatter,
+  more diversified portfolio that does not depend on fragile return forecasts.
+- **The five-stage quality gate and Monte Carlo** stress-test the result by simulation before it is
+  trusted.
 
-A real failure mode surfaced here: an optimizer can assign an outsized weight to a single name (in
-one observed case, above 23%) when the per-symbol cap is expressed as a **soft penalty in the
-objective** rather than a **hard constraint on the execution path**. The correction is a hard
-per-symbol cap — a default near 15%, a maximum exception near 20%, tightened in signal-conflict or
-stale-regime windows. The principle: an optimizer does whatever is not explicitly blocked, so caps
-belong on the output, not in the objective.
+To control concentration risk, the per-symbol concentration cap is applied not as a soft penalty in
+the objective but as a hard constraint on the output, that is, on the execution path. The default is
+about 15%, an exception is allowed up to roughly 20%, and the cap is tightened further in
+signal-conflict or stale-regime windows. Because an optimizer does whatever is not explicitly
+blocked, the limit must live on the output rather than in the objective. What happens when this cap
+is absent, and how single-name concentration plays out in practice, is examined in detail in the
+Part 4 loss analysis.
 
 ---
 
 ## 3. The output: a rebalancing plan
 
-The optimization does not place orders. It produces a **rebalancing plan** — a per-symbol table of
-target weight, target shares, current shares, the delta, and an action (buy / sell / hold). Each
-entry is then checked by the risk engine (Part 3.4) before any order is sent.
+The optimization itself does not place orders. The rebalancing plan produced in the final stage of
+the batch holds, for each symbol in the portfolio, the target weight, target shares, current shares,
+the delta, and an action of buy, sell, or hold. Each entry is checked by the risk engine (Part 3.4)
+before any order is sent.
 
 | Field | Meaning |
 |---|---|
-| `targetWeight` | the optimizer's desired share of the portfolio |
-| `currentWeight` | what the book holds now |
-| `targetShares` / `currentShares` | whole-share translation of the weights |
-| `deltaShares` | the trade needed to move from current to target |
+| `targetWeight` | the portfolio weight the optimizer intends |
+| `currentWeight` | the weight the portfolio currently holds |
+| `targetShares` / `currentShares` | the weights translated into whole shares |
+| `deltaShares` | the trade needed to move from current holdings to the target |
 | `action` | buy / sell / hold |
 | `riskGateStatus` | approved / blocked / capped by the risk engine |
 
-> **Next:** Part 3.3 opens an actual rebalancing plan from the event log — a real night's portfolio —
-> and reads its weights, trades, and risk-gate decisions line by line.
+> **Next:** Part 3.3 opens an actual rebalancing plan from the event log, a specific night's
+> portfolio, and reads its weights, trades, and risk-gate decisions line by line.
 
 
