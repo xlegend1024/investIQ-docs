@@ -75,9 +75,9 @@ permalink: /
   </a>
   <a class="iq-card" href="en-us/part3_4_approval_gated_execution.html">
     <span class="iq-card-num">Part 3.4</span>
-    <span class="iq-card-title">Approval-Gated Execution</span>
-    <span class="iq-card-desc">Propose → review → execute · HMAC token · fail-closed veto.</span>
-    <span class="iq-card-alt">한국어 · 승인 게이트 실행 →</span>
+    <span class="iq-card-title">Automated Execution</span>
+    <span class="iq-card-desc">Auto-propose → auto-execute · HMAC token · fail-closed veto.</span>
+    <span class="iq-card-alt">한국어 · 자동 실행과 코드 거부권 →</span>
   </a>
   <a class="iq-card" href="en-us/part4_loss_attribution.html">
     <span class="iq-card-num">Part 4</span>

@@ -85,9 +85,10 @@ whatever is not explicitly blocked.
 
 ### Lesson ⑤ Build a veto into the automated pipeline
 
-The propose → review → execute pattern, HMAC tokens, fail-closed defaults, and human approval put a
-veto at the one step where money moves. Full automation is not always correct; the less expert the
-builder, the more a human and a veto layer belong at the final step.
+In a system that is automated end to end, the veto must live in **code**, not in a human click. HMAC
+tokens, fail-closed defaults, and per-name hard caps exercise the veto at the one step where money
+moves. The human controls only the switches above it — the kill switch and the live-capital arming —
+not individual orders. Full automation is not the danger; **automation without a veto** is.
 
 ---
 
@@ -99,7 +100,7 @@ builder, the more a human and a veto layer belong at the final step.
 | Data | Is this the authoritative record or a convenient copy? | Trusting an incomplete local log |
 | Universe | Is the analysis set the same as the trading set? | Selection bias from mixing the two |
 | Sizing | Are caps hard constraints on the execution path? | Trusting the optimizer to self-diversify |
-| Execution | Is there a veto at the step where money moves? | Full automation without a human gate |
+| Execution | Is there a veto at the step where money moves? | Automation where money moves with no coded veto |
 
 The throughline of the series: the value was not a profitable strategy — the realized result was a
 near-break-even loss — but a **repeatable method for being honestly wrong**. For a non-specialist,

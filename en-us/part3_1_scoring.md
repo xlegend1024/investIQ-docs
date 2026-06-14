@@ -13,7 +13,7 @@ nav_order: 5
 > **Scope and limits.** Performance figures are realized PnL from an Alpaca paper account, single
 > window. This sub-part covers how each symbol is scored; Part 3.2 covers the post-market pipeline
 > and portfolio optimization, Part 3.3 walks a real allocation example, and Part 3.4 covers
-> approval-gated execution.
+> automated execution and the coded veto.
 
 ---
 

@@ -65,8 +65,10 @@ original author. Quality comes from independent review, not consensus.
 
 ## 2. What we built — 14 microservices
 
-InvestIQ automates U.S. equity swing trading under an **approval-gated** model: analysis is
-automated, execution requires human approval.
+InvestIQ runs U.S. equity swing trading **fully automated**: from analysis to execution it is
+unattended, and the veto at the money-moving step is held not by a human but by a **coded
+risk-engine** (HMAC, fail-closed). The only human gate is not per-order but arming live (real-capital)
+mode; the default is paper.
 
 ```mermaid
 flowchart LR

@@ -32,7 +32,7 @@ search_exclude: true
 | **3.1** | [Strategy — Scoring Symbols (Spec-070)](./en-us/part3_1_scoring.md) | The composite score: momentum/technical + news sentiment × pullback multiplier | Composite-score flowchart |
 | **3.2** | [Post-Market Pipeline & Portfolio Optimization](./en-us/part3_2_postmarket_pipeline.md) | Nightly post-market batch · Markowitz / Risk Parity · quality gate · concentration cap | Pipeline + optimization flowcharts |
 | **3.3** | [A Real Allocation, Read Line by Line](./en-us/part3_3_real_allocation_example.md) | The actual 2026-06-12 rebalancing plan · 31 held names · whole-share trades · 3 risk-gate blocks | Real target-weight bar, 14-day weight heatmap |
-| **3.4** | [From Plan to Order — Approval-Gated Execution](./en-us/part3_4_approval_gated_execution.md) | Propose → review → execute · HMAC token · fail-closed veto | Approval-gated sequence diagram |
+| **3.4** | [From Plan to Order — Automated Execution](./en-us/part3_4_approval_gated_execution.md) | Auto-propose → auto-execute · risk-engine HMAC token · fail-closed coded veto · human gate only for live-capital arming | Automated-execution sequence diagram |
 | **4** | [What the Loss Actually Was — A Causal Reading](./en-us/part4_loss_attribution.md) | Realized −$369.85 over 927 round-trips · single-name tail (ASTH) · indistinguishable from break-even · news signal underpowered | H1–H6 attribution charts, IC term structure |
 | **5** | [Lessons — Working with AI](./en-us/part5_lessons_for_working_with_ai.md) | Pre-registration · authoritative records · universe separation · hard caps · veto structure | AI-collaboration loop flowchart |
 

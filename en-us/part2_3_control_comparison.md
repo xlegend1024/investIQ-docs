@@ -29,8 +29,9 @@ nav_order: 4
   already outperformed by +14pp before we traded it.** The clean difference-in-differences estimate
   of forward skill is **not statistically significant.**
 - Conclusion: the selection mostly **rode pre-existing momentum**, it did not demonstrably
-  **predict** it. The strategic direction is to test selection with a point-in-time universe and
-  out-of-sample windows — not to scale the current rule.
+  **predict** it. Yet the fact that a non-specialist's pipeline — news sentiment plus a few rules —
+  filled a previously empty watchlist with **names the market was actually interested in, with live
+  momentum** is not mere coincidence; it sits between "significant" and "meaningless."
 
 ---
 
@@ -154,10 +155,12 @@ prediction. It is consistent with the DiD verdict and cannot upgrade it.
 
 ---
 
-## 5. What the selection means
+## 5. What the selection means — not prediction, but not coincidence
 
-Collecting and trading only a sentiment-selected slice of NASDAQ leaves a **large, measurable, and
-mostly spurious** statistical footprint:
+What the statistics above knock down is exactly one thing: **prediction**. Most of the treated
+group's post-period lead (~69%) already existed before any trade, and the trend-removed
+difference-in-differences cannot reject zero. The claim "we knew in advance which names would rise"
+is not supported by this data. Four caveats narrow it further:
 
 1. **The slice beats the index by construction.** Selecting active, high-sentiment, high-momentum
    small/mid-caps means that in an up-tape they rise more than SPY. The +24.8% vs +8.1% is largely
@@ -168,9 +171,18 @@ mostly spurious** statistical footprint:
 4. **It does not generalize to NASDAQ.** The control is still *news-covered* names, not a random
    draw; external validity is limited to "names the pipeline could see."
 
-This sharpens the whole series: the apparent edge lives in the **selection stage**, but on a proper
-control + placebo test that edge is **mostly momentum the system rode, not demonstrated forward
-skill.**
+But the same data shows **something else clearly**. What the test rejects is *prediction*, not
+*capture*. In the PRE window — before any trade — the treated group was already at +10.7%, while the
+all-non-traded control sat at −0.7% and the explicitly negative-sentiment set at −8.4%. The pipeline
+leaned *systematically* toward names that already had market attention and live momentum, and
+*systematically* away from negative ones.
+
+Here is the core point of this part. **"Not statistically significant" is not the same as
+"meaningless."** That a non-specialist, using only news sentiment and a few rules, built a candidate
+pool that filled a previously empty watchlist with **names the market actually cared about — names
+with live momentum** — is hard to write off as coincidence. The selection did not *predict* which
+names would rise, but something repeatable was at work in *capturing* market interest and momentum.
+So the result can be called neither "significant" nor "meaningless" — it sits between the two.
 
 ---
 
@@ -193,9 +205,11 @@ from and how to test it honestly:
    next experiment is whether the selection adds anything *beyond* a simple momentum screen — if it
    does not, the news machinery is not earning its complexity.
 
-The honest version of the project's conclusion is therefore methodological rather than financial: we
-learned **how to measure whether a universe selection has skill** — a control group plus a placebo
-window plus difference-in-differences — and applied to our own data, that measurement says **not
-yet.** That is a more durable result than a single-window equity curve.
+The honest version of the project's conclusion is therefore methodological rather than financial:
+the novice's news-based selection clearly had *something* when it came to **capturing** market
+interest and momentum, but the measurement that asks whether that is **predictive skill** — a control
+group plus a placebo window plus difference-in-differences — cannot yet answer "yes." What we learned
+is how to separate those two and test them honestly, and that is a more durable result than a
+single-window equity curve.
 
 

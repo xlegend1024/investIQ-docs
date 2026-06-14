@@ -25,6 +25,6 @@ permalink: /en-us/
 | 3.1 | [Strategy — Scoring Symbols (Spec-070)](part3_1_scoring.md) | Composite score: momentum/technical + news sentiment |
 | 3.2 | [Post-Market Pipeline & Portfolio Optimization](part3_2_postmarket_pipeline.md) | Markowitz / Risk Parity · quality gate · concentration cap |
 | 3.3 | [A Real Allocation, Read Line by Line](part3_3_real_allocation_example.md) | The actual 2026-06-12 rebalancing plan |
-| 3.4 | [From Plan to Order — Approval-Gated Execution](part3_4_approval_gated_execution.md) | Propose → review → execute · HMAC token · fail-closed veto |
+| 3.4 | [From Plan to Order — Automated Execution](part3_4_approval_gated_execution.md) | Auto-propose → auto-execute · risk-engine HMAC · fail-closed veto |
 | 4 | [What the Loss Actually Was](part4_loss_attribution.md) | Realized −$369.85 · single-name tail (ASTH) |
 | 5 | [Lessons — Working with AI](part5_lessons_for_working_with_ai.md) | Pre-registration · authoritative records · hard caps |

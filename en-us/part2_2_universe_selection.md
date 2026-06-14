@@ -132,6 +132,21 @@ active names**, not absolute performance. Because of this cap + rotation, the ac
 always small (≤15), while **the cumulative count of traded names grows much larger** over time — good
 names come in, weak ones drop out.
 
+The purpose of the cap + rotation is not merely "what to pick" but, one level above that, to
+**continuously manage the input pool**. It does four things:
+
+1. **Keep the candidate pool clean.** The cap + rotation keep the pool small and strong, preventing
+   weak names from lingering and contaminating downstream decisions.
+2. **Manage next-cycle performance.** Even if today's decision is already made, the pool to be used in
+   tomorrow's / the next premarket snapshot must be kept in shape — so underperformers are pushed out
+   early and slots are reserved for more promising names.
+3. **Reflect execution reality.** It uses not just signal scores but actual realized PnL (the
+   `realized_pnl` above), separating "names that look good in theory" from "names that actually make
+   money."
+4. **Bound operational complexity.** Growing the universe without limit makes monitoring, decisions,
+   and fill management explode. The 15-name cap is the ceiling that preserves strategy consistency and
+   operational stability.
+
 ---
 
 ## 5. The regime gate — the top-level switch on when to buy
@@ -154,32 +169,7 @@ outright** — the final gate on universe selection.
 
 ---
 
-## 6. This universe is not traded directly — candidates vs actual trading
-
-An important distinction: watchlist-intel's active universe only decides **what to *consider***; it
-does not trigger trades by itself. The symbols actually traded intraday go through two more stages.
-
-```mermaid
-flowchart LR
-    WL["watchlist-intel<br/>active universe ≤15<br/>(candidate pool)"] -->|enabled symbols| PM["post-market batch<br/>(quant-research)<br/>screener + optimization"]
-    PM -->|applied plan| TW["target-weights<br/>(written by state)"]
-    TW -->|read at session open| EX["intraday delta executor<br/>(what is actually traded)"]
-    EX --> ORD["orders → execution"]
-```
-
-- **Candidate pool (watchlist-intel):** enabled watchlist + held + promotion candidates + benchmarks
-  become the **input universe** for the post-market batch.
-- **Actual target (post-market, Part 3.2):** the nightly batch optimizes portfolio weights over that
-  universe, and state writes them as **target-weights** — the canonical handoff point.
-- **Intraday execution:** at session open the executor reads those target-weights and orders only the
-  **delta from current holdings**. It does not discover new symbols intraday.
-
-In one line: watchlist-intel is the "roster," the post-market optimization is the "starting lineup and
-weights," and the intraday executor fills the gap between that lineup and current holdings.
-
----
-
-## 7. So the result — 133 symbols
+## 6. So the result — 133 symbols
 
 Running this pipeline over 44 trading days yields **the 133 symbols the system actually traded** (two
 out-of-scope names excluded). Because the active universe is capped at 15 concurrently, 133 is not a

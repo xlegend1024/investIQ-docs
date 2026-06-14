@@ -48,6 +48,16 @@ Running post-market matters for a non-specialist: it removes the temptation to r
 noise, it works on **completed** bars (no lookahead), and it makes the night's decision a single
 reviewable artifact rather than a stream of ad-hoc trades.
 
+> **Note — universe management vs weight optimization are different layers.**
+> The active universe (watchlist-intel) of Part 2.2 and the weight optimization of this part are not
+> redundant — they are an **upper layer (universe management) and a lower layer (weight
+> optimization).** The weights are **today's execution plan**, fixed before the open; the active
+> universe is the **input-quality and rotation mechanism** that keeps producing good plans. The flow
+> is one-directional: watchlist-intel's enabled names (+ held, promotion candidates, benchmarks) form
+> this batch's **input universe**; the batch optimizes weights over it into **target-weights**; and
+> the intraday executor orders only the delta from current holdings. So even though the weights are
+> fixed first, keeping the input pool in shape for the next cycle is the role of the universe layer.
+
 ---
 
 ## 2. Why optimization — and the concentration trap

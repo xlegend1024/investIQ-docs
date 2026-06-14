@@ -103,7 +103,7 @@ Reading one real plan makes the abstract pipeline concrete:
 3. **The plan is a proposal, not an order.** Three trades were blocked at the gate. The system
    proposes; the risk engine disposes.
 
-> **Next:** Part 3.4 follows an approved plan entry through the **approval-gated execution** path —
-> propose → review → execute — and the HMAC token that guards every order.
+> **Next:** Part 3.4 follows a plan entry through the **unattended automated execution** path —
+> propose → auto-execute — and the risk-engine HMAC token (fail-closed) that guards every order.
 
 

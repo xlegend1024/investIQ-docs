@@ -1,65 +1,72 @@
 ---
-title: "3.4 Approval-Gated Execution"
+title: "3.4 Automated Execution & Coded Veto"
 parent: English
 nav_order: 8
 ---
 
-# Part 3.4 — From Plan to Order: Approval-Gated Execution
+# Part 3.4 — From Plan to Order: Automated Execution with a Coded Veto
 
 [Series Home (English)](../README.md) | [한국어 README](../README_kokr.md) | [이 문서 한국어](../ko-kr/part3_4_approval_gated_execution.md)
 
 > *Series: Building an Algorithmic Trading System as an Investing Novice, with an AI Team (Part 3.4 of 5)*
 >
-> **Scope and limits.** Paper-account, single window. This sub-part covers how an approved
-> rebalancing-plan entry becomes a broker order under the approval gate.
+> **Scope and limits.** Paper-account, single window. This sub-part covers how a rebalancing plan
+> becomes a broker order **automatically, with no human in the per-trade loop**, and how a
+> **coded risk-engine** holds the veto on that path.
 
 ---
 
 ## Summary
 
-- The system's philosophy: **the algorithm proposes, the human approves, and the risk engine holds
-  the veto.**
+- InvestIQ is a **fully automated** algo-trading system: from proposal to order submission there is
+  no per-trade human approval. **The algorithm proposes, and a coded risk-engine holds the veto.**
 - No order reaches the broker without an **HMAC token** from risk-engine — a token-less order is
   treated as forged.
 - The default is **fail-closed**: when in doubt, block. Every decision is preserved in an audit log.
+- The only human gate is not per-order but the **live-capital (real money) arming switch**. Paper
+  runs unattended, and the executor is **paper-only by hardcoded contract** (it refuses to submit if
+  live is enabled).
 
 ---
 
-## 1. The approval-gated flow
+## 1. The automated execution flow
 
 A "proposal" here is the rebalancing plan from Part 3.3, generated in code by the algorithm service —
-not by an LLM. It moves to execution only through a fixed gate.
+not by an LLM. The nightly post-market batch writes it as `target-weights`, and **at session open the
+intraday executor reads it and orders — with no human intervention** — only the delta from current
+holdings. Every order executes only after passing a fixed code gate.
 
 ```mermaid
 sequenceDiagram
     participant R as quant-research<br/>(proposal generation)
     participant S as state<br/>(orchestrator)
-    participant U as Operator (human)
+    participant EX as intraday executor<br/>(auto-submits deltas)
     participant RE as risk-engine
     participant E as execution
     participant L as logging-storage
 
-    R->>S: Propose target-weight plan
-    S->>U: Show proposal on dashboard
-    U->>S: One-click approve
-    S->>RE: Request order-intent validation
+    R->>S: Target-weight plan → target-weights
+    S->>EX: Load target-weights at session open (unattended)
+    EX->>RE: Request order-intent validation
     RE->>RE: Check position/loss limits, direction-lock, cooldowns
     alt Limits pass
         RE-->>E: Issue HMAC approval token
         E->>E: Submit Alpaca paper order
         E->>L: Record execution report
     else Limit exceeded / conflict / kill switch
-        RE-->>S: Reject (fail-closed)
-        S->>L: Audit-log the rejection reason
+        RE-->>EX: Reject (fail-closed)
+        EX->>L: Audit-log the rejection reason
     end
 ```
 
 Part 3.3's three blocked trades (AAPL, ASX, INDV direction-locks) are exactly the `else` branch
-firing on real output: the plan asked to buy, the gate said no, and the rejection reason was logged.
+firing on real output: the plan asked to buy, **the gate — code, not a human — said no**, and the
+rejection reason was logged.
 
 ## 2. Key properties
 
-1. The proposal is **auto-generated**, but execution requires **human approval**.
+1. Both proposal generation and order execution are **fully automated**. There is no per-trade human
+   approval step.
 2. risk-engine puts a cryptographic gate on every order via an **HMAC token** — a token-less order is
    treated as forged.
 3. **fail-closed**: when in doubt, block. The default is rejection, not passage.
@@ -67,15 +74,21 @@ firing on real output: the plan asked to buy, the gate said no, and the rejectio
 
 The HMAC mechanism turns inter-module trust from a promise into a cryptographic proof: whether an
 order is a legitimate algorithm proposal or a stray order created by a defect, execution rejects it
-unless it carries a valid risk-engine token. For a system built by a non-specialist, this structural
-distrust is what produces safety.
+unless it carries a valid risk-engine token. For a fully automated system built by a non-specialist,
+placing the veto **in code rather than in a human's attention** is what produces safety.
 
-## 3. Why a human stays in the loop
+## 3. Where the human stays — the live-capital arming switch
 
-The propose → review → execute pattern keeps a person at the one step where money moves. Full
-automation is not always correct; the less expert the builder, the more a human and a veto layer
-belong at the final step. The cost is one click per night; the benefit is that no optimizer error,
-data glitch, or code defect can place an order on its own.
+In paper operation the human is not in the per-order loop. The single gate a human holds is the
+**per-trading-date switch that arms live (real-capital) mode** — default off, never turned on in this
+paper series, and the executor is paper-only by hardcoded contract anyway. So the human controls
+*whether real money is at stake*, not *which names get traded*.
+
+The rest of the human's role sits not in the execution loop but in the **development and research
+layer** (Part 5): designing and validating the strategy, and hard-coding the caps and veto. The
+safety of full automation comes not from a human click at the final step but from a **coded,
+fail-closed veto at the money-moving step**, with the kill switch and live-capital arming switch above
+it.
 
 > **Next:** Part 4 opens the realized record and reads the loss causally — what the −$369.85 over 927
 > round-trips actually was, and why a single name decided the period.

@@ -32,7 +32,7 @@ search_exclude: true
 | **3.1** | [전략 — 종목 점수 매기기 (Spec-070)](./ko-kr/part3_1_scoring.md) | 컴포지트 점수: 모멘텀/기술 + 뉴스 감성 × 풀백 배수 | 컴포지트 점수 플로차트 |
 | **3.2** | [Post-Market 파이프라인과 포트폴리오 최적화](./ko-kr/part3_2_postmarket_pipeline.md) | 야간 post-market 배치 · Markowitz / Risk Parity · 품질 게이트 · 집중도 측 | 파이프라인 + 최적화 플로차트 |
 | **3.3** | [실제 할당, 한 줄씩 읽기](./ko-kr/part3_3_real_allocation_example.md) | 실제 2026-06-12 리밸런싱 플랜 · 31개 보유 종목 · 정수 주식 거래 · 리스크 게이트 3건 차단 | 실제 목표 비중 바, 14일 비중 히트맵 |
-| **3.4** | [플랜에서 주문으로 — 승인 게이트 실행](./ko-kr/part3_4_approval_gated_execution.md) | 제안 → 검토 → 실행 · HMAC 토큰 · fail-closed 거부권 | 승인 게이트 시퀀스 다이어그램 |
+| **3.4** | [플랜에서 주문으로 — 자동 실행과 코드 거부권](./ko-kr/part3_4_approval_gated_execution.md) | 자동 제안 → 자동 실행 · risk-engine HMAC 토큰 · fail-closed 코드 거부권 · 사람은 실자본 무장만 | 자동 실행 시퀀스 다이어그램 |
 | **4** | [손실의 실체 — 인과적 해석](./ko-kr/part4_loss_attribution.md) | 927 라운드트립 −$369.85 · 단일 종목 테일(ASTH) · 손익분기와 구별 불가 · 뉴스 신호 검정력 부족 | H1–H6 귀인 차트, IC 항기간 구조 |
 | **5** | [교훈 — AI와 함께 일하기](./ko-kr/part5_lessons_for_working_with_ai.md) | 사전등록 · 권위 있는 기록 · 유니버스 분리 · 하드 캡 · 거부권 구조 | AI 협업 루프 플로차트 |
 
