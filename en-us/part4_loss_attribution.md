@@ -147,7 +147,7 @@ temporal — one day.
 
 ## 8. The news signal: consistent but unconfirmed
 
-A separate study (`news_causality_v3`) asked whether the news-sentiment signal predicted forward
+A separate study asked whether the news-sentiment signal predicted forward
 returns among the traded names. Prices for that study come from Alpaca Market Data; sentiment is the
 InvestIQ news-intel daily aggregate, lagged one day.
 
@@ -175,10 +175,8 @@ The corrective priorities follow directly from the findings rather than from a n
 | H2 break-even | Treat the edge as unproven; an expectancy monitor with a fail-closed kill switch |
 | H4 diversification | Healthy — do not over-de-risk the body |
 
-The full remediation plan, with per-name caps and the workstream breakdown, is in
-`loss_attribution_v2/reports/DEV_PLAN.md`. The headline is simple: one diversified, near-break-even
-book lost its period to a single name, and the fix is to cap that single name — not to rebuild the
-strategy.
+The headline is simple: one diversified, near-break-even book lost its period to a single name, and
+the fix is to cap that single name, not to rebuild the strategy.
 
 ---
 

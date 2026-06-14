@@ -56,7 +56,7 @@ independence — original author locked out on rejection — is the structural d
 ### Lesson ① Lock your criteria before seeing the results
 
 The news study (Part 4) fixed its hypotheses, tests, and acceptance criteria in a document before
-the data was examined (`PRE_REGISTRATION.md`). Because the criteria were locked, the honest outcome
+the data was examined (pre-registration). Because the criteria were locked, the honest outcome
 — a directionally consistent but **underpowered, unconfirmed** signal — could be reported without
 moving the goalposts. AI tries many hypotheses quickly; without pre-registration it will eventually
 find something that looks good by chance, and that artifact will be mistaken for a discovery.
