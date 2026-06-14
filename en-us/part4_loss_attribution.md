@@ -13,23 +13,26 @@ nav_order: 9
 > **Scope and limits.** The figures below come from an Alpaca **paper** account, reconstructed from
 > the broker's own **filled-order record** over a single window (2026-04-13 to 2026-06-13). They are
 > real fills, not a proxy — but they cover one regime and one short window, so the attribution should
-> be read as a description of this experiment, not a general result. **Two numbers appear and must
-> not be confused:** the account **balance change of ≈ −$878** (the operator's equity moved from
-> ~$25,000 to ~$24,122), and the **long-only closed round-trip realized PnL of −$369.85** used for
-> the per-name attribution below. Section 1 reconciles the two with a full equity bridge.
+> be read as a description of this experiment, not a general result. **The system is long-only by
+> design and did not run a short strategy** (a handful of incidental residual shorts in the record are
+> explained in Section 1). **Two numbers appear and must not be confused:** the account **balance
+> change of ≈ −$878** (the operator's equity moved from ~$25,000 to ~$24,122), and the **long-only
+> closed round-trip realized PnL of −$369.85** used for the per-name attribution below. Section 1
+> reconciles the two with a full equity bridge.
 
 ---
 
 ## Summary
 
 - The account's **equity fell by ≈ −$878** over the window. That breaks down as **realized
-  (long + short) −$452 + unrealized open positions −$339 + fees/slippage −$88**.
+  (long + incidental shorts) −$452 + unrealized open positions −$339 + fees/slippage −$88**.
 - The per-name attribution uses the **−$369.85 long-only closed round-trip** figure across **927
   round-trips in 133 names** — economically near break-even, not a structural blowup.
 - A bootstrap of the per-trade outcomes places the 95% confidence interval at **[−$3,156, +$2,149]**,
   which spans zero: the result is **statistically indistinguishable from break-even**.
-- The entire net loss is one outlier. **ASTH contributed −$2,712 (733% of net); excluding it, the
-  book is +$2,343.** The strategy is diversified; the only concentration is a single-name tail.
+- Almost the entire net loss came from one name. **ASTH alone lost −$2,712, while the rest of the
+  book made +$2,343**; that single large loss offset the gains and pulled the total to −$370. The
+  strategy is diversified; the only concentration is a single-name tail.
 - The profile is a **low hit rate (41.7%) with a positive payoff (1.31)** — a marginally negative
   expectancy that small improvements would flip positive.
 - In a separate study, the news-sentiment signal was **directionally consistent but
@@ -44,17 +47,22 @@ It is worth being precise, because two figures circulate and they measure differ
 The account's **equity changed by about −$878** (≈$25,000 → ≈$24,122). The per-name analysis that
 follows is built on a narrower figure: the **long-only closed round-trip realized PnL of −$369.85**,
 obtained by FIFO-matching buys to sells per symbol over the window. That −$369.85 is correct for what
-it measures — *closed long trades only* — but it is **not** the balance change, and earlier drafts
-that presented it as such were wrong.
+it measures — *closed long trades only* — but it is **not** the balance change (−$878); the gap
+between the two comes from the three components below.
 
 Three components separate the two. They are computed by `reconcile_equity.py` and reconcile exactly:
 
 | Component | Amount | Why the round-trip figure misses it |
 |---|---:|---|
-| Realized PnL, **long + short** | −$451.50 | 22 `sell_short` fills open short positions the long-only matcher drops |
+| Realized PnL (incl. incidental shorts) | −$451.50 | 22 `sell_short` fills, created when a sell exceeded the held quantity, open short positions the long-only matcher drops |
 | **Unrealized** PnL (37 open positions marked at the 2026-06-12 close) | −$338.66 | a realized-only matcher never marks open inventory (net +188 long / −56 short shares) |
 | **Fees / slippage / rounding** | −$87.84 | not contained in fill prices (0.009% of gross traded notional) |
 | **Total equity change** | **−$878.00** | matches the observed balance |
+
+Note that the system is **long-only by design** and does not deliberately short. The 22 `sell_short`
+fills above are not a short strategy but **incidental residual shorts** — sells whose quantity
+exceeded the position held at that moment — included here only so the equity bridge reconciles
+exactly.
 
 So the headline for the *account* is **−$878**; the headline for the *closed-long-trade attribution*
 is **−$369.85**. The rest of this part analyzes the latter (it is the clean, matched record), with
@@ -79,9 +87,10 @@ not decompose.
 The first and decisive finding: one name set the sign of the entire period.
 
 ![Single-name tail](./images/H1_single_name_tail.png)
-*Figure. The twelve worst contributors. ASTH realized −$2,712 — 733% of the −$369.85 net. The
-next-largest losers (PARR −$321, ECO −$282, ESE −$216, GE −$197) are an order of magnitude
-smaller. Excluding ASTH, the book is +$2,343.*
+*Figure. The twelve worst contributors. ASTH alone realized −$2,712 — more than seven times the
+−$369.85 net loss. The next-largest losers (PARR −$321, ECO −$282, ESE −$216, GE −$197) are an order
+of magnitude smaller. Excluding ASTH the book is +$2,343, and that single loss offsetting the rest is
+what pulls the total to −$370.*
 
 This reframes the whole exercise. The loss is not the product of a broadly bad strategy; it is a
 single-name tail event against an otherwise positive book. The corrective lever is therefore
